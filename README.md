@@ -20,7 +20,7 @@ The goal is to provide a consistent way to define UI elements and data workflows
 **Dependencies:**
 
 ```bash
-npm i lucide-react @tanstack/react-query zod class-variance-authority mongoose
+npm i lucide-react @tanstack/react-query zod sonner mongoose
 # or
 yarn add lucide-react @tanstack/react-query zod class-variance-authority mongoose
 # or

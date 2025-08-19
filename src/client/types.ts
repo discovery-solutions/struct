@@ -11,7 +11,14 @@ export interface StructUIConfig {
   Button: React.ComponentType<any>;
   Input: React.ComponentType<any>;
   Loader: React.ComponentType<any>;
-  DataTable: React.ComponentType<any>;
+  Table: {
+    Root: React.ComponentType<any>;
+    Header: React.ComponentType<any>;
+    Body: React.ComponentType<any>;
+    Row: React.ComponentType<any>;
+    Head: React.ComponentType<any>;
+    Cell: React.ComponentType<any>;
+  };
   Card: {
     Header: React.ComponentType<any>;
     Content: React.ComponentType<any>;

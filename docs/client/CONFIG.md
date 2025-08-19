@@ -15,7 +15,7 @@ import { config } from "./config"; // your struct config with component mapping
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <StructUIProvider config={components}>
+    <StructUIProvider config={config}>
       <Toaster />
       {children}
     </StructUIProvider>
@@ -34,6 +34,7 @@ The `config` object maps **Struct field types and core components** to your UI l
 ```ts
 import { Dialog, DialogTrigger, DialogDescription, DialogHeader, DialogTitle, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
@@ -55,7 +56,15 @@ export const config = {
   Button,
   Input,
   Loader,
-  DataTable,
+
+  Table: {
+    Root: Table,
+    Header: TableHeader,
+    Body: TableBody,
+    Row: TableRow,
+    Head: TableHead,
+    Cell: TableCell,
+  },
 
   // Card
   Card: {

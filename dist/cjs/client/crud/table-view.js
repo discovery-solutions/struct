@@ -12,6 +12,7 @@ const modal_1 = require("./form/modal");
 const lucide_react_1 = require("lucide-react");
 const search_header_1 = require("./search-header");
 const provider_1 = require("../provider");
+const data_table_1 = require("./data-table");
 const react_query_1 = require("@tanstack/react-query");
 const utils_1 = require("../utils");
 const link_1 = __importDefault(require("next/link"));
@@ -36,7 +37,7 @@ function TableView({ columns, asChild, hideAdd = false, endpoint, queryParams, L
     const filteredData = search
         ? data.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
         : data;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: LeftItems })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center h-full", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? ((0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : ((0, jsx_runtime_1.jsx)(Struct.DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: LeftItems })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center h-full", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? ((0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : ((0, jsx_runtime_1.jsx)(data_table_1.DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
 }
 const Cell = ({ row, endpoint, parentAsChild, }) => {
     const [dialogOpen, setDialogOpen] = (0, react_1.useState)(false);

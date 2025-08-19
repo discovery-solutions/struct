@@ -26,16 +26,16 @@
         }
     },
     "peerDependencies": {
-        "lucide-react": "*",
         "@tanstack/react-query": "*",
         "aws4": "*",
         "class-variance-authority": "*",
+        "lucide-react": "*",
+        "mongoose": "*",
         "next": "15.*",
         "react": "19.*",
         "react-dom": "19.*",
         "tailwind-merge": "*",
         "tailwindcss": "*",
-        "mongoose": "*",
         "zod": "*"
     },
     "devDependencies": {
@@ -60,5 +60,8 @@
     "files": [
         "dist",
         "src"
-    ]
+    ],
+    "dependencies": {
+        "@tanstack/react-table": "^8.21.3"
+    }
 }

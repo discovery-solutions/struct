@@ -6,6 +6,7 @@ import { useModalForm } from "./form/modal";
 import { MoreVertical } from "lucide-react";
 import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
+import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../utils";
 import Link from "next/link";
@@ -30,7 +31,7 @@ export function TableView({ columns, asChild, hideAdd = false, endpoint, queryPa
     const filteredData = search
         ? data.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
         : data;
-    return (_jsxs("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? (_jsx(SearchHeader, { hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsx(Struct.DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
+    return (_jsxs("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? (_jsx(SearchHeader, { hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsx(DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
 }
 const Cell = ({ row, endpoint, parentAsChild, }) => {
     const [dialogOpen, setDialogOpen] = useState(false);

@@ -5,6 +5,7 @@ import { useModalForm } from "./form/modal";
 import { MoreVertical } from "lucide-react";
 import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
+import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../utils";
 import Link from "next/link";
@@ -89,7 +90,7 @@ export function TableView({
           </p>
         )
       ) : (
-        <Struct.DataTable data={filteredData as any} columns={enhancedColumns} />
+        <DataTable data={filteredData as any} columns={enhancedColumns} />
       )}
 
       {ListFooterComponent}
