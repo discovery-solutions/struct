@@ -1,5 +1,6 @@
 "use client";
 export { ConfirmDialog, useConfirmDialog } from "./confirm-dialog";
+export { ModalForm, ModalFormProvider, useModalForm } from "./crud/form/modal";
 export { ListView, ListViewHeader } from "./crud/list-view";
 export { StructUIProvider, useStructUI } from "./provider";
 export { FieldRender } from "./crud/form/renderer";

@@ -41,6 +41,8 @@ import { Loader } from "@/components/ui/loader";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
+export const queryClient = new QueryClient()
+
 export const config = {
   // If you want custom inputs to use in your forms, you can just add them here:
   // Textarea,
@@ -92,6 +94,9 @@ export const config = {
     Content: DropdownMenuContent,
     Item: DropdownMenuItem,
   },
+
+  // Query Client
+  queryClient: queryClient,
 
   // Toast system
   toast,

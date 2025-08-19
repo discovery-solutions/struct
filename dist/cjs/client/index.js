@@ -1,10 +1,14 @@
 "use strict";
 "use client";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetcher = exports.ModelForm = exports.TableView = exports.FieldRender = exports.useStructUI = exports.StructUIProvider = exports.ListViewHeader = exports.ListView = exports.useConfirmDialog = exports.ConfirmDialog = void 0;
+exports.fetcher = exports.ModelForm = exports.TableView = exports.FieldRender = exports.useStructUI = exports.StructUIProvider = exports.ListViewHeader = exports.ListView = exports.useModalForm = exports.ModalFormProvider = exports.ModalForm = exports.useConfirmDialog = exports.ConfirmDialog = void 0;
 var confirm_dialog_1 = require("./confirm-dialog");
 Object.defineProperty(exports, "ConfirmDialog", { enumerable: true, get: function () { return confirm_dialog_1.ConfirmDialog; } });
 Object.defineProperty(exports, "useConfirmDialog", { enumerable: true, get: function () { return confirm_dialog_1.useConfirmDialog; } });
+var modal_1 = require("./crud/form/modal");
+Object.defineProperty(exports, "ModalForm", { enumerable: true, get: function () { return modal_1.ModalForm; } });
+Object.defineProperty(exports, "ModalFormProvider", { enumerable: true, get: function () { return modal_1.ModalFormProvider; } });
+Object.defineProperty(exports, "useModalForm", { enumerable: true, get: function () { return modal_1.useModalForm; } });
 var list_view_1 = require("./crud/list-view");
 Object.defineProperty(exports, "ListView", { enumerable: true, get: function () { return list_view_1.ListView; } });
 Object.defineProperty(exports, "ListViewHeader", { enumerable: true, get: function () { return list_view_1.ListViewHeader; } });
