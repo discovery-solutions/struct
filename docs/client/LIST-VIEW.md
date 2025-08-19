@@ -1,4 +1,4 @@
-# ListView (`client/CONFIG.md`)
+# ListView
 
 The **`ListView`** component is a **flexible, generic list/grid renderer** that works with either **local data** or **data fetched from a backend API**. It is fully integrated with **StructUIProvider** and **React Query**, and allows you to render custom item cards, headers, footers, and separators.
 
