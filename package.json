@@ -26,29 +26,26 @@
         }
     },
     "peerDependencies": {
-        "lucide-react": "^0.539.0",
-        "@tanstack/react-query": "^5.85.3",
+        "lucide-react": "*",
+        "@tanstack/react-query": "*",
         "aws4": "^1.12.0",
         "class-variance-authority": "^0.7.1",
         "next": "15.4.6",
         "react": "19.1.0",
         "react-dom": "19.1.0",
-        "react-hook-form": "^7.62.0",
         "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.0.0",
+        "mongoose": "^7.0.0",
         "zod": "^4.0.17"
     },
     "devDependencies": {
         "@types/node": "^20",
         "@types/react": "^19",
         "eslint": "^9",
-        "mongoose": "^7.0.0",
         "prettier": "^3.0.0",
-        "react": "^19.1.0",
         "tsup": "^8.5.0",
         "typescript": "^5",
-        "vitest": "^3.2.4",
-        "zod": "^3.0.0"
+        "vitest": "^3.2.4"
     },
     "repository": {
         "type": "git",

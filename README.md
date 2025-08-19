@@ -17,6 +17,17 @@ The goal is to provide a consistent way to define UI elements and data workflows
 
 ## 📦 Installation
 
+**Dependencies:**
+
+```bash
+npm i lucide-react @tanstack/react-query zod class-variance-authority mongoose
+# or
+yarn add lucide-react @tanstack/react-query zod class-variance-authority mongoose
+# or
+pnpm lucide-react @tanstack/react-query zod class-variance-authority mongoose
+```
+
+**Main Package:**
 ```bash
 npm install github:discovery-solutions/struct
 # or
