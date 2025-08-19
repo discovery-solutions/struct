@@ -7,7 +7,7 @@ import { useStructUI } from "../provider";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-interface ListViewProps<T> {
+export interface ListViewProps<T> {
   renderItem: (item: T, index: number) => ReactNode
   keyExtractor?: (item: T, index: number) => string | number
   ListHeaderComponent?: ReactNode

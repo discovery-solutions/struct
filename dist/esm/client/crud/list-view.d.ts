@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-interface ListViewProps<T> {
+export interface ListViewProps<T> {
     renderItem: (item: T, index: number) => ReactNode;
     keyExtractor?: (item: T, index: number) => string | number;
     ListHeaderComponent?: ReactNode;
@@ -26,4 +26,3 @@ export declare function ListView<T>({ data, endpoint, filters, queryParams, asCh
 export declare function ListViewHeader({ onChange }: {
     onChange: (value: string) => any;
 }): import("react/jsx-runtime").JSX.Element;
-export {};

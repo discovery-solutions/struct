@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-type TableViewProps = {
+export type TableViewProps = {
     columns: any[];
     endpoint: string;
     hideAdd?: boolean;
@@ -11,4 +11,3 @@ type TableViewProps = {
     ListFooterComponent?: ReactNode;
 };
 export declare function TableView({ columns, asChild, hideAdd, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }: TableViewProps): import("react/jsx-runtime").JSX.Element;
-export {};

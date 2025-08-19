@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../utils";
 import Link from "next/link";
 
-type TableViewProps = {
+export type TableViewProps = {
   columns: any[];
   endpoint: string;
   hideAdd?: boolean;
