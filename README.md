@@ -27,48 +27,6 @@ pnpm add @discovery-solutions/struct
 
 ---
 
-## 📁 Documentation Overview
-
-The package ships with detailed documentation for both **API/backend** and **client-side** components.
-
-### API / Backend Docs
-
-* `CONFIG.md` → configuration guide for database and auth setup.
-* `CRUD.md` → backend CRUD controller for Mongoose models.
-* `MODEL-SERVICE.md` → low-level model service for database operations.
-
-### Client / Frontend Docs
-
-* `CONFIG.md` → client configuration guide (StructUIProvider, StructUser extension).
-* `CONFIRM-DIALOG.md` → reusable confirmation dialog component.
-* `FORM.md` → generic dynamic form component with validation.
-* `LIST-VIEW.md` → flexible list view component with search, filters, and custom items.
-* `MODAL-FORM.md` → modal wrapper for forms integrated with API and validation.
-* `TABLE-VIEW.md` → data table component with inline actions, search, and React Query integration.
-
-### Project Structure
-
-```
-DSCVR.STRUCT/
-├─ project/
-│  ├─ dist/
-│  └─ docs/
-│     ├─ api/
-│     │  ├─ CONFIG.md
-│     │  ├─ CRUD.md
-│     │  └─ MODEL-SERVICE.md
-│     └─ client/
-│        ├─ CONFIG.md
-│        ├─ CONFIRM-DIALOG.md
-│        ├─ FORM.md
-│        ├─ LIST-VIEW.md
-│        ├─ MODAL-FORM.md
-│        └─ TABLE-VIEW.md
-└─ README.md
-```
-
----
-
 ## 📖 Next Steps
 
 After installing:
