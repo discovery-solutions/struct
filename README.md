@@ -18,11 +18,11 @@ The goal is to provide a consistent way to define UI elements and data workflows
 ## 📦 Installation
 
 ```bash
-npm install @discovery-solutions/struct
+npm install github:discovery-solutions/struct
 # or
-yarn add @discovery-solutions/struct
+yarn add github:discovery-solutions/struct
 # or
-pnpm add @discovery-solutions/struct
+pnpm add github:discovery-solutions/struct
 ```
 
 ---
