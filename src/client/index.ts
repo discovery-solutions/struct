@@ -1,6 +1,6 @@
 "use client";
 export { ConfirmDialog, ConfirmDialogProps, useConfirmDialog } from "./confirm-dialog";
-export { FieldInterface, StructToast, StructUIConfig } from "./types";
+export type { FieldInterface, StructToast, StructUIConfig } from "./types";
 export { ListView, ListViewHeader, ListViewProps } from "./crud/list-view";
 export { StructUIProvider, useStructUI } from "./provider";
 export { FieldRender, FieldRenderProps } from "./crud/form/renderer";

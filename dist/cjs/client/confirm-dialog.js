@@ -3,10 +3,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useConfirmDialog = exports.ConfirmDialog = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
 const react_query_1 = require("@tanstack/react-query");
 const provider_1 = require("./provider");
 const utils_1 = require("./utils");
-const react_1 = require("react");
 exports.ConfirmDialog = (0, react_1.forwardRef)(({ open: propOpen, onOpenChange: propOnOpenChange, title = "Tem certeza que deseja continuar?", description = "Essa ação é irreversível.", endpoint, params, method = "DELETE", onSuccess, onPress, onError, variant = "destructive", children, }, ref) => {
     const { queryClient, ...Struct } = (0, provider_1.useStructUI)();
     const [internalOpen, setInternalOpen] = (0, react_1.useState)(false);

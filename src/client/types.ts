@@ -1,4 +1,3 @@
-"use client";
 export interface StructToast {
   (message: string, opts?: { description?: string; action?: { label: string; onClick: () => void } }): void;
   success: (message: string, opts?: { description?: string }) => void;

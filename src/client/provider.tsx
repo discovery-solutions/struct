@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext } from "react";
-import { StructUIConfig } from "./types";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { StructUIConfig } from "./types";
 
 const StructUIContext = createContext<StructUIConfig | null>(null);
 
