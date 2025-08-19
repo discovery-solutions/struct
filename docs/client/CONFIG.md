@@ -11,7 +11,7 @@ Wrap your application with `StructUIProvider` in your root layout or top-level c
 ```tsx
 import { StructUIProvider } from "@discovery-solutions/struct/client";
 import { Toaster } from "sonner";
-import { components } from "./components"; // your component mapping
+import { config } from "./config"; // your struct config with component mapping
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -40,7 +40,7 @@ import { Loader } from "@/components/ui/loader";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-export const components = {
+export const config = {
   // If you want custom inputs to use in your forms, you can just add them here:
   // Textarea,
   // Select,
