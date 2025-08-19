@@ -47,7 +47,7 @@ export const User = mongoose?.models?.User || mongoose.model<UserInterface>("Use
 import { User, UserInterface } from "@/models/user";
 import { CRUDController } from "@/struct";
 
-export const userController = new CRUDController<UserInterface>(User, {
+export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
   softDelete: true,
   roles: {
     GET: "admin",
@@ -164,7 +164,7 @@ import { User, UserInterface } from "@/models/user";
 import { CRUDController } from "@/struct";
 import { z } from "zod";
 
-export const userController = new CRUDController<UserInterface>(User, {
+export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
   softDelete: true,
   createSchema: z.object({
     name: z.string(),
