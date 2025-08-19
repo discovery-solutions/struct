@@ -15,7 +15,7 @@ export declare function ModalFormProvider({ children }: {
 interface ModalFormProps {
     id?: string;
     title?: string;
-    modelName: string;
+    endpoint: string;
     fields: any[];
     schema: z.ZodSchema<any>;
     parseFetchedData?: (data: any) => Promise<any>;
@@ -24,5 +24,5 @@ interface ModalFormProps {
     onSuccess?: (response: any) => any;
     cols?: number;
 }
-export declare function ModalForm({ title, modelName, fields, schema, parseFetchedData, mutationParams, buttonLabel, onSuccess, cols, }: ModalFormProps): import("react/jsx-runtime").JSX.Element | null;
+export declare function ModalForm({ title, fields, schema, endpoint, parseFetchedData, mutationParams, buttonLabel, onSuccess, cols, }: ModalFormProps): import("react/jsx-runtime").JSX.Element | null;
 export {};

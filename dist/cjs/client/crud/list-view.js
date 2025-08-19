@@ -8,8 +8,8 @@ exports.ListView = ListView;
 exports.ListViewHeader = ListViewHeader;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
-const navigation_1 = require("next/navigation");
 const search_header_1 = require("./search-header");
+const navigation_1 = require("next/navigation");
 const utils_1 = require("../utils");
 const provider_1 = require("../provider");
 const react_query_1 = require("@tanstack/react-query");
@@ -30,7 +30,7 @@ function ListView({ data, endpoint, filters, queryParams, asChild, className, co
             : arr;
     }, [data, queryData, search, filters]);
     const isEmpty = !listData || listData.length === 0;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: (0, utils_1.cn)("flex flex-1 flex-col px-4 pb-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value) })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex justify-center py-4", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : error ? ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-col items-center gap-2 py-4", children: [(0, jsx_runtime_1.jsx)("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || (0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : ((0, jsx_runtime_1.jsx)("div", { className: (0, utils_1.cn)("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) })), ListFooterComponent] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: (0, utils_1.cn)("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value) })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex justify-center py-4", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : error ? ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-col items-center gap-2 py-4", children: [(0, jsx_runtime_1.jsx)("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || (0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : ((0, jsx_runtime_1.jsx)("div", { className: (0, utils_1.cn)("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) })), ListFooterComponent] }));
 }
 function ListViewHeader({ onChange }) {
     const [search, setSearch] = (0, react_1.useState)("");

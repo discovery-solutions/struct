@@ -31,6 +31,7 @@ export interface StructUIConfig {
         Description: React.ComponentType<any>;
     };
     Dialog: {
+        Trigger: React.ComponentType<any>;
         Root: React.ComponentType<any>;
         Content: React.ComponentType<any>;
         Header: React.ComponentType<any>;

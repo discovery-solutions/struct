@@ -10,17 +10,16 @@ const provider_1 = require("../../provider");
 const renderer_1 = require("./renderer");
 const utils_1 = require("../../utils");
 const zod_1 = require("zod");
-function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, modelName, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel = false, cols, ...props }) {
+function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, cols, ...props }) {
     const [errors, setErrors] = (0, react_1.useState)({});
-    const { Loader, toast } = (0, provider_1.useStructUI)();
-    const queryClient = (0, react_query_1.useQueryClient)();
+    const { Loader, toast, queryClient } = (0, provider_1.useStructUI)();
     const params = (0, navigation_1.useParams)();
     const router = (0, navigation_1.useRouter)();
     const id = props.id || params.id;
     const mode = defaultMode || (id ? "edit" : "register");
-    const endpoint = `/api/${modelName}${mode === "edit" ? `/${id}` : ""}`;
+    const endpoint = `/api/${props.endpoint}${mode === "edit" ? `/${id}` : ""}`;
     const { data: fetchedData, isLoading: isLoadingData, ...query } = (0, react_query_1.useQuery)({
-        queryKey: [modelName, id],
+        queryKey: [endpoint, id],
         enabled: !!id,
         queryFn: () => (0, utils_1.fetcher)(endpoint).then(async (data) => {
             const raw = { ...defaultValues, ...data };
@@ -47,7 +46,7 @@ function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch,
         },
         onSuccess: (res) => {
             toast.success(mode === "edit" ? "Atualizado com sucesso!" : "Criado com sucesso!");
-            queryClient.invalidateQueries({ queryKey: [modelName] });
+            queryClient.invalidateQueries({ queryKey: [endpoint] });
             if (mode === "register" && redirectAfterRegister)
                 router.back();
             return res;

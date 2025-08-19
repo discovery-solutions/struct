@@ -67,7 +67,7 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
         const name = Struct.alias[type];
         return Struct[name];
     };
-    return ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, children: [(0, jsx_runtime_1.jsx)("div", { className: `grid ${COL_GRID[cols]} gap-4 w-full`, children: fields.map((field) => {
+    return ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, children: [(0, jsx_runtime_1.jsx)("div", { className: `grid ${COL_GRID[cols]} gap-4 w-full`, children: fields.map(({ defaultValue, ...field }) => {
                     if (!isConditionalMet(field, values))
                         return null;
                     const Component = getComponentByType(field.type);
@@ -76,7 +76,7 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
                     const error = getNestedError(errors, field);
                     const commonProps = {
                         ...field,
-                        value: typeof getValue(field.name) !== "undefined" ? getValue(field.name) : field.defaultValue,
+                        value: typeof getValue(field.name) !== "undefined" ? getValue(field.name) : defaultValue,
                         onChange: handleChange,
                         className: (0, utils_1.cn)("w-full", field.className),
                         disabled,

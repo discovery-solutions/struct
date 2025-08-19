@@ -5,9 +5,10 @@ exports.StructUIProvider = StructUIProvider;
 exports.useStructUI = useStructUI;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
+const react_query_1 = require("@tanstack/react-query");
 const StructUIContext = (0, react_1.createContext)(null);
 function StructUIProvider({ children, config, }) {
-    return ((0, jsx_runtime_1.jsx)(StructUIContext.Provider, { value: config, children: children }));
+    return ((0, jsx_runtime_1.jsx)(react_query_1.QueryClientProvider, { client: config.queryClient, children: (0, jsx_runtime_1.jsx)(StructUIContext.Provider, { value: config, children: children }) }));
 }
 function useStructUI() {
     const ctx = (0, react_1.useContext)(StructUIContext);

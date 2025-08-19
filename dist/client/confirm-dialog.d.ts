@@ -1,9 +1,10 @@
-type ConfirmDialogProps = {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+import { ReactNode } from "react";
+export type ConfirmDialogProps = {
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
     title?: string;
     description?: string;
-    modelName?: string;
+    endpoint?: string;
     params?: {
         id: string;
     };
@@ -12,6 +13,11 @@ type ConfirmDialogProps = {
     onPress?: () => void;
     onError?: (error: any) => void;
     variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+    children?: ReactNode;
 };
-export declare const ConfirmDialog: ({ open, onOpenChange, title, description, modelName, params, method, onSuccess, onPress, onError, variant, }: ConfirmDialogProps) => import("react/jsx-runtime").JSX.Element;
-export {};
+export declare const ConfirmDialog: import("react").ForwardRefExoticComponent<ConfirmDialogProps & import("react").RefAttributes<HTMLDivElement>>;
+export declare const useConfirmDialog: () => {
+    open: boolean;
+    setOpen: import("react").Dispatch<import("react").SetStateAction<boolean>>;
+    trigger: () => void;
+};
