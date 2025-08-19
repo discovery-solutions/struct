@@ -113,6 +113,17 @@ export const config = {
 
 ---
 
+## 🌐 Global CSS Setup
+
+Tailwind classes from the Struct UI components must be registered.
+Add this line to your **`app/globals.css`** (or equivalent global CSS file):
+
+```css
+@source "../../node_modules/@discovery-solutions/struct";
+```
+
+---
+
 ## 🧩 Required Components
 
 Struct expects the following components from your UI layer:
