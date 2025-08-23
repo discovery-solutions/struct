@@ -1,6 +1,6 @@
+export { type ModalFormProps, ModalForm, ModalFormProvider, useModalForm } from "./crud/form/modal";
 export { ConfirmDialog, ConfirmDialogProps, useConfirmDialog } from "./confirm-dialog";
 export type { FieldInterface, StructToast, StructUIConfig } from "./types";
-export { ModalForm, ModalFormProvider, useModalForm } from "./crud/form/modal";
 export { ListView, ListViewHeader, ListViewProps } from "./crud/list-view";
 export { StructUIProvider, useStructUI } from "./provider";
 export { FieldRender, FieldRenderProps } from "./crud/form/renderer";

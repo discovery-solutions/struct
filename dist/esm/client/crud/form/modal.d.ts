@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { z } from "zod";
+import { FieldInterface } from "../../types";
 type ModalFormState = {
     id?: string;
     open: boolean;
@@ -12,11 +13,11 @@ export declare function useModalForm(): ModalFormState;
 export declare function ModalFormProvider({ children }: {
     children: ReactNode;
 }): import("react/jsx-runtime").JSX.Element;
-interface ModalFormProps {
+export interface ModalFormProps {
     id?: string;
     title?: string;
     endpoint: string;
-    fields: any[];
+    fields: FieldInterface[];
     schema: z.ZodSchema<any>;
     parseFetchedData?: (data: any) => Promise<any>;
     mutationParams?: Record<string, any>;

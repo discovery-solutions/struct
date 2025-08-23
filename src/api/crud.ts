@@ -46,8 +46,8 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       const skip = (page - 1) * limit;
 
       const total = await this.model.countDocuments(filter);
-      let q = this.model.find(filter);
-      if (this.options.populate) this.options.populate.forEach((p) => q = q.populate(p as string) as any);
+      let q: any = this.model.find(filter);
+      if (this.options.populate) this.options.populate.forEach((p: any) => q = q.populate(p));
       if (limit > 0) q = q.skip(skip).limit(limit);
       result = await q.sort({ updatedAt: -1 }).lean() as T[];
 

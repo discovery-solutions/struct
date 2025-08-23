@@ -37,7 +37,7 @@ export interface Hooks<T, U extends StructUser = StructUser> {
     }) => Promise<any>;
 }
 export interface CRUDOptions<T, U extends StructUser = StructUser> {
-    populate?: (keyof T)[];
+    populate?: (keyof T)[] | any;
     createSchema?: z.infer<any>;
     updateSchema?: z.infer<any>;
     hooks?: Hooks<T, U>;

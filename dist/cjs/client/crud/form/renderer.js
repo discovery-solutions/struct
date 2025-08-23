@@ -20,7 +20,7 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
         if (!name.includes("."))
             return values[name];
         let data = { ...values };
-        for (const key of name.split("."))
+        for (const key of name?.split("."))
             data = data?.[key];
         return data;
     };
@@ -100,7 +100,7 @@ function getNestedError(errors, field) {
     return errors?.[key];
 }
 function setNestedValue(obj, path, value) {
-    const keys = path.split(".");
+    const keys = path?.split(".");
     let current = obj;
     for (let i = 0; i < keys.length - 1; i++) {
         if (!current[keys[i]])

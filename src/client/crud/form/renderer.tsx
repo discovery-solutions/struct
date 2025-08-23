@@ -42,7 +42,7 @@ export const FieldRender = ({
     if (!name.includes(".")) return values[name];
 
     let data = { ...values };
-    for (const key of name.split("."))
+    for (const key of name?.split("."))
       data = data?.[key];
 
     return data;
@@ -152,7 +152,7 @@ function getNestedError(errors: any, field: FieldInterface): string | undefined 
 }
 
 function setNestedValue(obj: any, path: string, value: any) {
-  const keys = path.split(".");
+  const keys = path?.split(".");
   let current = obj;
   for (let i = 0; i < keys.length - 1; i++) {
     if (!current[keys[i]]) current[keys[i]] = {};

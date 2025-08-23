@@ -3,6 +3,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { useStructUI } from "../../provider";
 import { ModelForm } from "./";
 import { z } from "zod";
+import { FieldInterface } from "../../types";
 
 type ModalFormState = {
   id?: string;
@@ -33,19 +34,17 @@ export function ModalFormProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ModalFormContext.Provider
-      value={{ open, id, openModal, closeModal }}
-    >
+    <ModalFormContext.Provider value={{ open, id, openModal, closeModal }}>
       {children}
     </ModalFormContext.Provider>
   );
 }
 
-interface ModalFormProps {
+export interface ModalFormProps {
   id?: string,
   title?: string,
   endpoint: string,
-  fields: any[];
+  fields: FieldInterface[];
   schema: z.ZodSchema<any>;
   parseFetchedData?: (data: any) => Promise<any>;
   mutationParams?: Record<string, any>;
