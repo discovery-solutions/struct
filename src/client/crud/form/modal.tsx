@@ -85,7 +85,7 @@ export function ModalForm({
 
   if (!endpoint) return null;
 
-  const isOpen = open && (modalId === thisModalId || !modalId);
+  const isOpen = open && modalId === thisModalId;
 
   return (
     <Struct.Dialog.Root open={isOpen} onOpenChange={closeModal}>
