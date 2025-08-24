@@ -85,6 +85,7 @@ export function ModalForm({
 
   if (!endpoint) return null;
 
+  console.log(open, modalId, thisModalId)
   const isOpen = open && modalId === thisModalId;
 
   return (
