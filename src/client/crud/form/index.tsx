@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FieldInterface } from "../../types";
 import { useStructUI } from "../../provider";
 import { FieldRender } from "./renderer";
-import { fetcher } from "../../utils";
+import { fetcher } from "../../../fetcher";
 import { z } from "zod";
 
 export interface ModelFormProps {

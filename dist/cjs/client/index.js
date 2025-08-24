@@ -21,5 +21,5 @@ var table_view_1 = require("./crud/table-view");
 Object.defineProperty(exports, "TableView", { enumerable: true, get: function () { return table_view_1.TableView; } });
 var index_1 = require("./crud/form/index");
 Object.defineProperty(exports, "ModelForm", { enumerable: true, get: function () { return index_1.ModelForm; } });
-var utils_1 = require("./utils");
-Object.defineProperty(exports, "fetcher", { enumerable: true, get: function () { return utils_1.fetcher; } });
+var fetcher_1 = require("../fetcher");
+Object.defineProperty(exports, "fetcher", { enumerable: true, get: function () { return fetcher_1.fetcher; } });

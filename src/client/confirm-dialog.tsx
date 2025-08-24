@@ -2,7 +2,7 @@
 import { ReactNode, useState, forwardRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useStructUI } from "./provider";
-import { fetcher } from "./utils";
+import { fetcher } from "../fetcher";
 
 export type ConfirmDialogProps = {
   open?: boolean;

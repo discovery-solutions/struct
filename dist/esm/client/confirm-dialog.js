@@ -3,7 +3,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, forwardRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useStructUI } from "./provider";
-import { fetcher } from "./utils";
+import { fetcher } from "../fetcher";
 export const ConfirmDialog = forwardRef(({ open: propOpen, onOpenChange: propOnOpenChange, title = "Tem certeza que deseja continuar?", description = "Essa ação é irreversível.", endpoint, params, method = "DELETE", onSuccess, onPress, onError, variant = "destructive", children, }, ref) => {
     const { queryClient, ...Struct } = useStructUI();
     const [internalOpen, setInternalOpen] = useState(false);

@@ -3,9 +3,10 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useMemo, useState } from "react";
 import { SearchHeader } from "./search-header";
 import { usePathname } from "next/navigation";
-import { fetcher, cn } from "../utils";
 import { useStructUI } from "../provider";
 import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "../../fetcher";
+import { cn } from "../utils";
 import Link from "next/link";
 export function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, }) {
     const Struct = useStructUI();

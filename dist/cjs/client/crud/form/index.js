@@ -8,7 +8,7 @@ const navigation_1 = require("next/navigation");
 const react_1 = require("react");
 const provider_1 = require("../../provider");
 const renderer_1 = require("./renderer");
-const utils_1 = require("../../utils");
+const fetcher_1 = require("../../../fetcher");
 const zod_1 = require("zod");
 function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, cols, ...props }) {
     const [errors, setErrors] = (0, react_1.useState)({});
@@ -21,7 +21,7 @@ function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch,
     const { data: fetchedData, isLoading: isLoadingData, ...query } = (0, react_query_1.useQuery)({
         queryKey: [endpoint, id],
         enabled: !!id,
-        queryFn: () => (0, utils_1.fetcher)(endpoint).then(async (data) => {
+        queryFn: () => (0, fetcher_1.fetcher)(endpoint).then(async (data) => {
             const raw = { ...defaultValues, ...data };
             if (!parseFetchedData)
                 return raw;
@@ -42,7 +42,7 @@ function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch,
         mutationFn: async (values) => {
             const parsed = schema.parse({ ...values, ...mutationParams });
             const method = mode === "edit" ? "PATCH" : "POST";
-            return (0, utils_1.fetcher)(endpoint, { method, body: parsed });
+            return (0, fetcher_1.fetcher)(endpoint, { method, body: parsed });
         },
         onSuccess: (res) => {
             toast.success(mode === "edit" ? "Atualizado com sucesso!" : "Criado com sucesso!");

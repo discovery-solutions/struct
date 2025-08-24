@@ -7,4 +7,4 @@ export { StructUIProvider, useStructUI } from "./provider";
 export { FieldRender, FieldRenderProps } from "./crud/form/renderer";
 export { TableView, TableViewProps } from "./crud/table-view";
 export { ModelForm, ModelFormProps } from "./crud/form/index";
-export { fetcher } from "./utils";
+export { fetcher } from "../fetcher";

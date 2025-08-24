@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useStructUI } from "../../provider";
 import { FieldRender } from "./renderer";
-import { fetcher } from "../../utils";
+import { fetcher } from "../../../fetcher";
 import { z } from "zod";
 export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, cols, ...props }) {
     const [errors, setErrors] = useState({});

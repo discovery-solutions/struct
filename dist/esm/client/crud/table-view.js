@@ -8,7 +8,7 @@ import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
 import { DataTable } from "./data-table";
 import { useQuery } from "@tanstack/react-query";
-import { fetcher } from "../utils";
+import { fetcher } from "../../fetcher";
 import Link from "next/link";
 export function TableView({ columns, asChild, hideAdd = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }) {
     const [search, setSearch] = useState("");

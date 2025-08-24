@@ -6,14 +6,14 @@ const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 const react_query_1 = require("@tanstack/react-query");
 const provider_1 = require("./provider");
-const utils_1 = require("./utils");
+const fetcher_1 = require("../fetcher");
 exports.ConfirmDialog = (0, react_1.forwardRef)(({ open: propOpen, onOpenChange: propOnOpenChange, title = "Tem certeza que deseja continuar?", description = "Essa ação é irreversível.", endpoint, params, method = "DELETE", onSuccess, onPress, onError, variant = "destructive", children, }, ref) => {
     const { queryClient, ...Struct } = (0, provider_1.useStructUI)();
     const [internalOpen, setInternalOpen] = (0, react_1.useState)(false);
     const open = propOpen ?? internalOpen;
     const onOpenChange = propOnOpenChange ?? setInternalOpen;
     const mutation = (0, react_query_1.useMutation)({
-        mutationFn: () => (0, utils_1.fetcher)(`/api/${endpoint}/${params?.id}`, { method }),
+        mutationFn: () => (0, fetcher_1.fetcher)(`/api/${endpoint}/${params?.id}`, { method }),
         onSuccess: () => {
             Struct.toast.success("Ação realizada com sucesso!");
             queryClient.invalidateQueries();

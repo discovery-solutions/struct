@@ -10,9 +10,10 @@ const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 const search_header_1 = require("./search-header");
 const navigation_1 = require("next/navigation");
-const utils_1 = require("../utils");
 const provider_1 = require("../provider");
 const react_query_1 = require("@tanstack/react-query");
+const fetcher_1 = require("../../fetcher");
+const utils_1 = require("../utils");
 const link_1 = __importDefault(require("next/link"));
 function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, }) {
     const Struct = (0, provider_1.useStructUI)();
@@ -20,7 +21,7 @@ function ListView({ data, endpoint, filters, queryParams, asChild, className, co
     const { data: queryData, isLoading, error, refetch, } = (0, react_query_1.useQuery)({
         enabled: !!endpoint,
         queryKey: [endpoint, "list", Object.values(queryParams || {})],
-        queryFn: () => (0, utils_1.fetcher)(`/api/${endpoint}`, { params: queryParams }),
+        queryFn: () => (0, fetcher_1.fetcher)(`/api/${endpoint}`, { params: queryParams }),
         refetchOnWindowFocus: refetchOnMount,
     });
     const listData = (0, react_1.useMemo)(() => {
