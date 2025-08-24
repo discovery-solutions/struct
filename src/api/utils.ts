@@ -20,8 +20,11 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
     try {
       let user = null as U | null;
 
-      if (Struct.config.auth?.getSession) {
-        user = await Struct.config.auth?.getSession?.();
+      if (Struct.config?.auth?.getSession)
+        await Struct.config?.database?.startConnection?.();
+
+      if (Struct.config?.auth?.getSession) {
+        user = await Struct.config?.auth?.getSession?.();
 
         if (!user)
           return Response.json({ message: 'Unauthorized' }, { status: 401 })
