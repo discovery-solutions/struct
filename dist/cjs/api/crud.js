@@ -101,7 +101,7 @@ class CRUDController {
             if (!response)
                 return Response.json({ message: "Not Found" }, { status: 404 });
             return Response.json(response);
-        }, { role: this.getRoleForMethod("GET") });
+        }, { roles: this.getRoleForMethod("GET") });
         this.POST = (0, utils_1.withSession)(async ({ user }, req) => {
             let body;
             try {
@@ -134,7 +134,7 @@ class CRUDController {
                 response = await this.options.hooks.beforeSend(created, { user, method: "POST" });
             }
             return Response.json(response);
-        }, { role: this.getRoleForMethod("POST") });
+        }, { roles: this.getRoleForMethod("POST") });
         this.PATCH = (0, utils_1.withSession)(async ({ user }, req, { params }) => {
             const [id] = (await params).id;
             let body = this.options.customParser
@@ -165,7 +165,7 @@ class CRUDController {
             if (response)
                 return Response.json(response);
             return Response.json({ message: "Update failed" }, { status: 500 });
-        }, { role: this.getRoleForMethod("PATCH") });
+        }, { roles: this.getRoleForMethod("PATCH") });
         this.DELETE = (0, utils_1.withSession)(async ({ user }, _, { params }) => {
             const { id: [id] } = (await params) || { id: [undefined] };
             if (!id)
@@ -186,7 +186,7 @@ class CRUDController {
                 await this.options.hooks.afterDelete({ user, original });
             }
             return Response.json({ success: true });
-        }, { role: this.getRoleForMethod("DELETE") });
+        }, { roles: this.getRoleForMethod("DELETE") });
         this.dynamic = "force-dynamic";
         this.runtime = "nodejs";
         this.parseFilters = (filters) => {

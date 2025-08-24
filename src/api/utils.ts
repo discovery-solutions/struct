@@ -1,7 +1,7 @@
 import { Handler, Params, StructUser } from "./types";
 import { NextRequest } from "next/server";
-import { Struct } from "../config";
 import { ZodError } from "zod";
+import { Struct } from "../config";
 
 export const parseEntityToObject = (entity: any): any => {
   if (!entity) return entity;
@@ -24,16 +24,14 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
         await Struct.config?.database?.startConnection?.();
 
       if (Struct.config?.auth?.getSession) {
-        console.log(Struct.config?.auth?.getSession)
         const session = await Struct.config?.auth?.getSession?.();
         user = session?.user as U || null;
 
         if (!user)
           return Response.json({ message: 'Unauthorized' }, { status: 401 })
 
-        const roles = Array.isArray(params.role) ? params.role : [params.role];
-        console.log(roles, session, user.role)
-        if (params.role && !roles.includes(user.role))
+        const roles = Array.isArray(params.roles) ? params.roles : [params.roles];
+        if (params.roles && !roles.includes(user.role))
           return Response.json({ message: 'Forbidden' }, { status: 403 });
       }
 

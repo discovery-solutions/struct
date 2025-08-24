@@ -43,10 +43,10 @@ export interface CRUDOptions<T, U extends StructUser = StructUser> {
     hooks?: Hooks<T, U>;
     softDelete?: boolean;
     customParser?: (req: NextRequest) => Promise<Partial<T>>;
-    roles?: Partial<Record<"GET" | "POST" | "PATCH" | "DELETE", string>>;
+    roles?: Partial<Record<"GET" | "POST" | "PATCH" | "DELETE", string | string[]>>;
 }
 export interface Params {
-    role?: string | string[];
+    roles?: string | string[];
 }
 export type Handler<U extends StructUser> = (session: {
     user: U | null;

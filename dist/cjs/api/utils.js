@@ -19,14 +19,12 @@ const withSession = (handler, params = {}) => {
             if (config_1.Struct.config?.database?.startConnection)
                 await config_1.Struct.config?.database?.startConnection?.();
             if (config_1.Struct.config?.auth?.getSession) {
-                console.log(config_1.Struct.config?.auth?.getSession);
                 const session = await config_1.Struct.config?.auth?.getSession?.();
                 user = session?.user || null;
                 if (!user)
                     return Response.json({ message: 'Unauthorized' }, { status: 401 });
-                const roles = Array.isArray(params.role) ? params.role : [params.role];
-                console.log(roles, session, user.role);
-                if (params.role && !roles.includes(user.role))
+                const roles = Array.isArray(params.roles) ? params.roles : [params.roles];
+                if (params.roles && !roles.includes(user.role))
                     return Response.json({ message: 'Forbidden' }, { status: 403 });
             }
             return (await Promise.all([handler({ user }, req, context)])).at(0);

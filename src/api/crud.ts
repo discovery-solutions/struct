@@ -81,7 +81,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       return Response.json({ message: "Not Found" }, { status: 404 });
 
     return Response.json(response);
-  }, { role: this.getRoleForMethod("GET") });
+  }, { roles: this.getRoleForMethod("GET") });
 
   POST = withSession<U>(async ({ user }, req) => {
     let body: any;
@@ -119,7 +119,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     }
 
     return Response.json(response);
-  }, { role: this.getRoleForMethod("POST") });
+  }, { roles: this.getRoleForMethod("POST") });
 
   PATCH = withSession<U>(async ({ user }, req, { params }) => {
     const [id] = (await params).id as string[];
@@ -164,7 +164,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       return Response.json(response);
 
     return Response.json({ message: "Update failed" }, { status: 500 });
-  }, { role: this.getRoleForMethod("PATCH") });
+  }, { roles: this.getRoleForMethod("PATCH") });
 
   DELETE = withSession<U>(async ({ user }, _, { params }) => {
     const { id: [id] } = (await params) || { id: [undefined] };
@@ -192,7 +192,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     }
 
     return Response.json({ success: true });
-  }, { role: this.getRoleForMethod("DELETE") });
+  }, { roles: this.getRoleForMethod("DELETE") });
 
   dynamic = "force-dynamic" as any;
   runtime = "nodejs" as any;
