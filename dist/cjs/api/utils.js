@@ -19,7 +19,8 @@ const withSession = (handler, params = {}) => {
             if (config_1.Struct.config?.auth?.getSession)
                 await config_1.Struct.config?.database?.startConnection?.();
             if (config_1.Struct.config?.auth?.getSession) {
-                user = await config_1.Struct.config?.auth?.getSession?.();
+                const session = await config_1.Struct.config?.auth?.getSession?.();
+                user = session?.user || null;
                 if (!user)
                     return Response.json({ message: 'Unauthorized' }, { status: 401 });
                 const roles = Array.isArray(params.role) ? params.role : [params.role];

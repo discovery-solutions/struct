@@ -15,7 +15,8 @@ export const withSession = (handler, params = {}) => {
             if (Struct.config?.auth?.getSession)
                 await Struct.config?.database?.startConnection?.();
             if (Struct.config?.auth?.getSession) {
-                user = await Struct.config?.auth?.getSession?.();
+                const session = await Struct.config?.auth?.getSession?.();
+                user = session?.user || null;
                 if (!user)
                     return Response.json({ message: 'Unauthorized' }, { status: 401 });
                 const roles = Array.isArray(params.role) ? params.role : [params.role];
