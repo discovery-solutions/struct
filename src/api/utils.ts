@@ -29,7 +29,9 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
         if (!user)
           return Response.json({ message: 'Unauthorized' }, { status: 401 })
 
-        if (params.role && user.role !== params.role)
+        const roles = Array.isArray(params.role) ? params.role : [params.role];
+        console.log(roles, user.role)
+        if (params.role && !roles.includes(user.role))
           return Response.json({ message: 'Forbidden' }, { status: 403 });
       }
 
