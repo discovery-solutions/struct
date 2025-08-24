@@ -12,15 +12,16 @@ export const withSession = (handler, params = {}) => {
     return async (req, context) => {
         try {
             let user = null;
-            if (Struct.config?.auth?.getSession)
+            if (Struct.config?.database?.startConnection)
                 await Struct.config?.database?.startConnection?.();
             if (Struct.config?.auth?.getSession) {
+                console.log(Struct.config?.auth?.getSession);
                 const session = await Struct.config?.auth?.getSession?.();
                 user = session?.user || null;
                 if (!user)
                     return Response.json({ message: 'Unauthorized' }, { status: 401 });
                 const roles = Array.isArray(params.role) ? params.role : [params.role];
-                console.log(roles, user.role);
+                console.log(roles, session, user.role);
                 if (params.role && !roles.includes(user.role))
                     return Response.json({ message: 'Forbidden' }, { status: 403 });
             }
