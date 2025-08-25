@@ -49,11 +49,18 @@ export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, o
             return res;
         },
         onError: (err) => {
+            console.log("onError", err);
             if (err instanceof z.ZodError) {
                 const fieldErrors = err.flatten().fieldErrors;
                 const formatted = Object.fromEntries(Object.entries(fieldErrors).map(([key, [msg]]) => [key, msg || "Campo inválido"]));
                 setErrors(formatted);
                 toast.error("Corrija os campos destacados");
+            }
+            else if (Array.isArray(err)) {
+                for (const item of err) {
+                    console.log(item);
+                    toast.error(item || "Erro ao salvar");
+                }
             }
             else {
                 console.error(err);
