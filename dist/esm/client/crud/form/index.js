@@ -81,5 +81,6 @@ export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, o
         if (onAfterSubmit)
             onAfterSubmit(res);
     };
+    console.log(mode, id, mode || (id ? "edit" : "register"));
     return isLoadingData ? (_jsx("div", { className: "flex justify-center items-center py-10", children: _jsx(Loader, {}) }, props.key + "-loading")) : (_jsx(FieldRender, { fields: fields, errors: errors, loading: mutation.isPending, initialValues: fetchedData || defaultValues, onSubmit: handleSubmit, onChange: onChange, buttonLabel: buttonLabel, disabled: mutation.isPending, cols: cols }, props.key));
 }

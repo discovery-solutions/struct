@@ -31,5 +31,5 @@ export interface ModalFormProps {
     onSuccess?: (response: any) => any;
     cols?: number;
 }
-export declare function ModalForm({ modalId: thisModalId, mode, title, fields, schema, endpoint, parseFetchedData, mutationParams, buttonLabel, onSuccess, cols, }: ModalFormProps): import("react/jsx-runtime").JSX.Element | null;
+export declare function ModalForm({ modalId: thisModalId, mode: thisMode, title, fields, schema, endpoint, parseFetchedData, mutationParams, buttonLabel, onSuccess, cols, }: ModalFormProps): import("react/jsx-runtime").JSX.Element | null;
 export {};

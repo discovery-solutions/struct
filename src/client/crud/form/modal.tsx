@@ -71,7 +71,7 @@ export interface ModalFormProps {
 
 export function ModalForm({
   modalId: thisModalId,
-  mode,
+  mode: thisMode,
   title,
   fields,
   schema,
@@ -88,6 +88,7 @@ export function ModalForm({
   if (!endpoint) return null;
 
   const isOpen = open && modalId === thisModalId;
+  const mode = thisMode || (id ? "edit" : "register");
 
   return (
     <Struct.Dialog.Root open={isOpen} onOpenChange={closeModal}>
@@ -96,9 +97,9 @@ export function ModalForm({
           <Struct.Dialog.Title>{title || (id ? "Editar" : "Novo")}</Struct.Dialog.Title>
         </Struct.Dialog.Header>
         <ModelForm
-          mode={mode || (id ? "edit" : "register")}
+          mode={mode}
           endpoint={endpoint}
-          id={id}
+          id={mode === "register" ? undefined : id}
           schema={schema}
           fields={fields}
           mutationParams={mutationParams}
