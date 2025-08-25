@@ -26,7 +26,7 @@ export const withSession = (handler, params = {}) => {
             return (await Promise.all([handler({ user }, req, context)])).at(0);
         }
         catch (err) {
-            const error = err?.flatten ? err.flatten().fieldErrors.map(([key, [msg]]) => `${key}: ${msg || "Campo inválido"}`) : err.message || 'Internal Server Error';
+            const error = err?.flatten ? Object.values(err.flatten().fieldErrors).flat().map((msg) => `${msg || "Campo inválido"}`) : err.message || 'Internal Server Error';
             console.log(error);
             return Response.json({ error }, { status: 500 });
         }
