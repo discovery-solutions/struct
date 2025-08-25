@@ -20,6 +20,7 @@ export declare function ModalFormProvider({ children }: {
 export interface ModalFormProps {
     modalId?: string;
     id?: string;
+    mode?: "register" | "edit";
     title?: string;
     endpoint: string;
     fields: FieldInterface[];
@@ -30,5 +31,5 @@ export interface ModalFormProps {
     onSuccess?: (response: any) => any;
     cols?: number;
 }
-export declare function ModalForm({ modalId: thisModalId, title, fields, schema, endpoint, parseFetchedData, mutationParams, buttonLabel, onSuccess, cols, }: ModalFormProps): import("react/jsx-runtime").JSX.Element | null;
+export declare function ModalForm({ modalId: thisModalId, mode, title, fields, schema, endpoint, parseFetchedData, mutationParams, buttonLabel, onSuccess, cols, }: ModalFormProps): import("react/jsx-runtime").JSX.Element | null;
 export {};

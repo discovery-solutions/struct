@@ -57,6 +57,7 @@ export function ModalFormProvider({ children }: { children: ReactNode }) {
 export interface ModalFormProps {
   modalId?: string;
   id?: string;
+  mode?: "register" | "edit";
   title?: string;
   endpoint: string;
   fields: FieldInterface[];
@@ -70,6 +71,7 @@ export interface ModalFormProps {
 
 export function ModalForm({
   modalId: thisModalId,
+  mode,
   title,
   fields,
   schema,
@@ -94,7 +96,7 @@ export function ModalForm({
           <Struct.Dialog.Title>{title || (id ? "Editar" : "Novo")}</Struct.Dialog.Title>
         </Struct.Dialog.Header>
         <ModelForm
-          mode={id ? "edit" : "register"}
+          mode={mode || id ? "edit" : "register"}
           endpoint={endpoint}
           id={id}
           schema={schema}
