@@ -41,7 +41,6 @@ function ModalForm({ modalId: thisModalId, title, fields, schema, endpoint, pars
     const Struct = (0, provider_1.useStructUI)();
     if (!endpoint)
         return null;
-    console.log(open, modalId, thisModalId);
     const isOpen = open && modalId === thisModalId;
     return ((0, jsx_runtime_1.jsx)(Struct.Dialog.Root, { open: isOpen, onOpenChange: closeModal, children: (0, jsx_runtime_1.jsxs)(Struct.Dialog.Content, { className: "sm:w-[95%] sm:max-w-3xl max-h-[95%] overflow-y-auto", children: [(0, jsx_runtime_1.jsx)(Struct.Dialog.Header, { children: (0, jsx_runtime_1.jsx)(Struct.Dialog.Title, { children: title || (id ? "Editar" : "Novo") }) }), (0, jsx_runtime_1.jsx)(_1.ModelForm, { mode: id ? "edit" : "register", endpoint: endpoint, id: id, schema: schema, fields: fields, mutationParams: mutationParams, parseFetchedData: parseFetchedData, buttonLabel: buttonLabel, cols: cols, defaultValues: defaultValues, redirectAfterRegister: false, onAfterSubmit: (response) => {
                         closeModal();

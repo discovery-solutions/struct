@@ -70,7 +70,7 @@ export interface FieldInterface {
     }[];
     colSpan?: number;
     mask?: string;
-    defaultValue?: string | string[] | boolean | number | null;
+    defaultValue?: any;
     className?: string;
     conditional?: {
         field: string;

@@ -57,7 +57,7 @@ export interface FieldInterface {
   options?: string[] | { value: string | boolean | number; label: string }[];
   colSpan?: number;
   mask?: string;
-  defaultValue?: string | string[] | boolean | number | null;
+  defaultValue?: any;
   className?: string;
   conditional?: {
     field: string;
