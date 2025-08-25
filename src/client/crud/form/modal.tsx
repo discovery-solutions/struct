@@ -96,7 +96,7 @@ export function ModalForm({
           <Struct.Dialog.Title>{title || (id ? "Editar" : "Novo")}</Struct.Dialog.Title>
         </Struct.Dialog.Header>
         <ModelForm
-          mode={mode || id ? "edit" : "register"}
+          mode={mode || (id ? "edit" : "register")}
           endpoint={endpoint}
           id={id}
           schema={schema}
