@@ -12,7 +12,7 @@ export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, o
     const { Loader, toast, queryClient } = useStructUI();
     const params = useParams();
     const router = useRouter();
-    const id = props.id || params.id;
+    const id = defaultMode === "register" ? undefined : (props.id || params.id);
     const mode = defaultMode || (id ? "edit" : "register");
     const endpoint = `/api/${props.endpoint}${mode === "edit" ? `/${id}` : ""}`;
     const { data: fetchedData, isLoading: isLoadingData, ...query } = useQuery({

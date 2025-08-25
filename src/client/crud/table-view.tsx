@@ -15,6 +15,7 @@ export type TableViewProps = {
   endpoint: string;
   hideAdd?: boolean;
   asChild?: boolean;
+  modalId?: string;
   queryParams?: Record<string, any>;
   LeftItems?: ReactNode;
   ListHeaderComponent?: ReactNode;
@@ -25,6 +26,7 @@ export type TableViewProps = {
 export function TableView({
   columns,
   asChild,
+  modalId,
   hideAdd = false,
   endpoint,
   queryParams,
@@ -56,6 +58,7 @@ export function TableView({
           endpoint={endpoint}
           Struct={Struct}
           router={router}
+          modalId={modalId}
         />
       ),
     },
@@ -71,6 +74,7 @@ export function TableView({
     <div className="flex flex-1 flex-col p-4 gap-4">
       {ListHeaderComponent ?? (
         <SearchHeader
+          modalId={modalId}
           hideAdd={hideAdd}
           asChild={asChild}
           search={search}
@@ -102,6 +106,7 @@ const Cell = ({
   row,
   endpoint,
   parentAsChild,
+  modalId,
 }: any) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { queryClient, ...Struct } = useStructUI();
@@ -120,7 +125,7 @@ const Cell = ({
         <Struct.Dropdown.Content align="end">
           <Struct.Dropdown.Item asChild>
             {parentAsChild ? (
-              <button className="w-full" onClick={() => openModal({ id: _id })}>
+              <button className="w-full" onClick={() => openModal({ id: _id, modalId })}>
                 Editar
               </button>
             ) : (

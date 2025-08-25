@@ -15,7 +15,7 @@ function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch,
     const { Loader, toast, queryClient } = (0, provider_1.useStructUI)();
     const params = (0, navigation_1.useParams)();
     const router = (0, navigation_1.useRouter)();
-    const id = props.id || params.id;
+    const id = defaultMode === "register" ? undefined : (props.id || params.id);
     const mode = defaultMode || (id ? "edit" : "register");
     const endpoint = `/api/${props.endpoint}${mode === "edit" ? `/${id}` : ""}`;
     const { data: fetchedData, isLoading: isLoadingData, ...query } = (0, react_query_1.useQuery)({

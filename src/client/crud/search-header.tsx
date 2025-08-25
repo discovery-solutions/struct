@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import Link from "next/link";
 
-export function SearchHeader({ asChild, search, onChange, LeftItems, hideAdd = false }: { hideAdd?: boolean, asChild?: boolean; search?: string, onChange: (e: any) => any, LeftItems?: ReactNode }) {
+export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hideAdd = false }: { hideAdd?: boolean, asChild?: boolean; search?: string, onChange: (e: any) => any, LeftItems?: ReactNode, modalId?: string }) {
   const { openModal } = useModalForm();
   const pathname = usePathname();
   const Struct = useStructUI();
@@ -22,7 +22,7 @@ export function SearchHeader({ asChild, search, onChange, LeftItems, hideAdd = f
         {LeftItems}
       </div>
       {(hideAdd) ? (null) : asChild ? (
-        <Struct.Button onClick={() => openModal()} className="w-fit">
+        <Struct.Button onClick={() => openModal({ modalId })} className="w-fit">
           Adicionar Novo
         </Struct.Button>
       ) : (
