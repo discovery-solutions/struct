@@ -11,16 +11,16 @@ export declare class CRUDController<T, U extends StructUser = StructUser> {
     constructor(model: Model<T>, options?: CRUDOptions<T, U>);
     private getRoleForMethod;
     GET: (req: NextRequest, context: {
-        params?: Promise<any>;
+        params: Promise<any>;
     }) => Promise<Response | undefined>;
     POST: (req: NextRequest, context: {
-        params?: Promise<any>;
+        params: Promise<any>;
     }) => Promise<Response | undefined>;
     PATCH: (req: NextRequest, context: {
-        params?: Promise<any>;
+        params: Promise<any>;
     }) => Promise<Response | undefined>;
     DELETE: (req: NextRequest, context: {
-        params?: Promise<any>;
+        params: Promise<any>;
     }) => Promise<Response | undefined>;
     dynamic: any;
     runtime: any;

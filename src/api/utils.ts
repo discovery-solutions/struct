@@ -16,7 +16,7 @@ export const parseEntityToObject = (entity: any): any => {
 }
 
 export const withSession = <U extends StructUser>(handler: Handler<U>, params: Params = {}) => {
-  return async (req: NextRequest, context: { params?: Promise<any> }) => {
+  return async (req: NextRequest, context: { params: Promise<any> }) => {
     try {
       let user = null as U | null;
 
