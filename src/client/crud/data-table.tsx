@@ -1,14 +1,17 @@
 "use client";
+import { useStructUI } from "../provider";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { cn } from "../utils";
+import Link from "next/link";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
-import { useStructUI } from "../provider";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "../utils";
 
 export interface DataTableProps {
   columns: ColumnDef<any>[];
@@ -19,11 +22,15 @@ export interface DataTableProps {
 
 export function DataTable({ columns, data, className, emptyText = "Nenhum resultado encontrado." }: DataTableProps) {
   const Struct = useStructUI();
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(), // 👈 necessário para sort
   });
 
   return (
@@ -33,10 +40,16 @@ export function DataTable({ columns, data, className, emptyText = "Nenhum result
           {table.getHeaderGroups().map((headerGroup) => (
             <Struct.Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <Struct.Table.Head key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                <Struct.Table.Head
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className="cursor-pointer select-none"
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {{
+                    asc: " 🔼",
+                    desc: " 🔽",
+                  }[header.column.getIsSorted() as string] ?? null}
                 </Struct.Table.Head>
               ))}
             </Struct.Table.Row>
@@ -46,10 +59,7 @@ export function DataTable({ columns, data, className, emptyText = "Nenhum result
         <Struct.Table.Body>
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
-              <Struct.Table.Row
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
+              <Struct.Table.Row key={row.id} data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
                   <Struct.Table.Cell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
