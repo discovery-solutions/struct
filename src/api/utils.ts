@@ -36,8 +36,10 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
       }
 
       return (await Promise.all([handler({ user }, req, context)])).at(0);
-    } catch (e: ZodError | any) {
-      const error = e?.flatten ? e.flatten().fieldErrors : e.message || 'Internal Server Error';
+    } catch (err: ZodError | any) {
+      const error = err?.flatten ? Object.fromEntries(
+        Object.entries(err.flatten().fieldErrors).map(([key, [msg]]: any) => [key, msg || "Campo inválido"])
+      ) : err.message || 'Internal Server Error';
       return Response.json({ error }, { status: 500 });
     }
   }
