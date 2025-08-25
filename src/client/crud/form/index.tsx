@@ -50,7 +50,7 @@ export function ModelForm({
   const params = useParams<{ id: string }>();
   const router = useRouter();
 
-  const id = props.id || params.id;
+  const id = defaultMode === "register" ? undefined : (props.id || params.id);
   const mode = defaultMode || (id ? "edit" : "register");
   const endpoint = `/api/${props.endpoint}${mode === "edit" ? `/${id}` : ""}`;
 
