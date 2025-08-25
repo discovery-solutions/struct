@@ -88,6 +88,7 @@ export function ModelForm({
       return res;
     },
     onError: (err: any) => {
+      console.log("onError", err)
       if (err instanceof z.ZodError) {
         const fieldErrors = err.flatten().fieldErrors;
         const formatted = Object.fromEntries(
@@ -95,6 +96,11 @@ export function ModelForm({
         );
         setErrors(formatted);
         toast.error("Corrija os campos destacados");
+      } else if (Array.isArray(err)) {
+        for (const item of err) {
+          console.log(item);
+          toast.error(item || "Erro ao salvar");
+        }
       } else {
         console.error(err);
         toast.error(err.message || "Erro ao salvar");
