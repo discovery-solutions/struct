@@ -1,6 +1,6 @@
 {
     "name": "@discovery-solutions/struct",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "type": "module",
     "description": "Framework para criação estruturada de forms e CRUDs com Next.js, React Hook Form, Zod e ShadCN.",
     "author": "Lucas Paes <lucas@dscvr.solutions>",
