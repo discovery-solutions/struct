@@ -20,10 +20,13 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
     try {
       let user = null as U | null;
 
-      if (Struct.config?.database?.startConnection)
+      if (Struct.config?.database?.startConnection) {
+        console.log("[withSession] Starting DB connection...");
         await Struct.config?.database?.startConnection?.();
+      }
 
       if (Struct.config?.auth?.getSession) {
+        console.log("[withSession] Checking user session...");
         const session = await Struct.config?.auth?.getSession?.();
         user = session?.user as U || null;
 
@@ -31,6 +34,7 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
           return Response.json({ message: 'Unauthorized' }, { status: 401 })
 
         const roles = Array.isArray(params.roles) ? params.roles : [params.roles];
+
         if (params.roles && !roles.includes(user.role))
           return Response.json({ message: 'Forbidden' }, { status: 403 });
       }

@@ -12,9 +12,12 @@ export const withSession = (handler, params = {}) => {
     return async (req, context) => {
         try {
             let user = null;
-            if (Struct.config?.database?.startConnection)
+            if (Struct.config?.database?.startConnection) {
+                console.log("[withSession] Starting DB connection...");
                 await Struct.config?.database?.startConnection?.();
+            }
             if (Struct.config?.auth?.getSession) {
+                console.log("[withSession] Checking user session...");
                 const session = await Struct.config?.auth?.getSession?.();
                 user = session?.user || null;
                 if (!user)
