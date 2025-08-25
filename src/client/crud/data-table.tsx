@@ -6,6 +6,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useStructUI } from "../provider";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "../utils";
 
 export interface DataTableProps {
   columns: ColumnDef<any>[];
@@ -24,7 +27,7 @@ export function DataTable({ columns, data, className, emptyText = "Nenhum result
   });
 
   return (
-    <div className="rounded-md border overflow-hidden">
+    <div className={cn("rounded-md border overflow-hidden", className)}>
       <Struct.Table.Root>
         <Struct.Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -64,5 +67,18 @@ export function DataTable({ columns, data, className, emptyText = "Nenhum result
         </Struct.Table.Body>
       </Struct.Table.Root>
     </div>
+  );
+}
+
+export const getLinkTo = (acessor: string) => {
+  return (props: any) => <LinkTo {...props} acessor={acessor} />;
+}
+
+export const LinkTo = ({ row, acessor }: { row: any, acessor: string }) => {
+  const pathname = usePathname();
+  return (
+    <Link href={[pathname, row.original._id].join("/")} className="text-blue-600 hover:underline">
+      {row.getValue(acessor)}
+    </Link>
   );
 }

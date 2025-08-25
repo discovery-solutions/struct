@@ -6,3 +6,8 @@ export interface DataTableProps {
     emptyText?: string;
 }
 export declare function DataTable({ columns, data, className, emptyText }: DataTableProps): import("react/jsx-runtime").JSX.Element;
+export declare const getLinkTo: (acessor: string) => (props: any) => import("react/jsx-runtime").JSX.Element;
+export declare const LinkTo: ({ row, acessor }: {
+    row: any;
+    acessor: string;
+}) => import("react/jsx-runtime").JSX.Element;
