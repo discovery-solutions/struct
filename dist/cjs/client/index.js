@@ -1,7 +1,7 @@
 "use strict";
 "use client";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetcher = exports.ModelForm = exports.TableView = exports.FieldRender = exports.useStructUI = exports.StructUIProvider = exports.ListViewHeader = exports.ListView = exports.useConfirmDialog = exports.ConfirmDialog = exports.useModalForm = exports.ModalFormProvider = exports.ModalForm = void 0;
+exports.fetcher = exports.getLinkTo = exports.ModelForm = exports.TableView = exports.FieldRender = exports.useStructUI = exports.StructUIProvider = exports.ListViewHeader = exports.ListView = exports.useConfirmDialog = exports.ConfirmDialog = exports.useModalForm = exports.ModalFormProvider = exports.ModalForm = void 0;
 var modal_1 = require("./crud/form/modal");
 Object.defineProperty(exports, "ModalForm", { enumerable: true, get: function () { return modal_1.ModalForm; } });
 Object.defineProperty(exports, "ModalFormProvider", { enumerable: true, get: function () { return modal_1.ModalFormProvider; } });
@@ -21,5 +21,7 @@ var table_view_1 = require("./crud/table-view");
 Object.defineProperty(exports, "TableView", { enumerable: true, get: function () { return table_view_1.TableView; } });
 var index_1 = require("./crud/form/index");
 Object.defineProperty(exports, "ModelForm", { enumerable: true, get: function () { return index_1.ModelForm; } });
+var data_table_1 = require("./crud/data-table");
+Object.defineProperty(exports, "getLinkTo", { enumerable: true, get: function () { return data_table_1.getLinkTo; } });
 var fetcher_1 = require("../fetcher");
 Object.defineProperty(exports, "fetcher", { enumerable: true, get: function () { return fetcher_1.fetcher; } });

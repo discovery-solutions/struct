@@ -5,6 +5,7 @@ export type { FieldInterface, StructToast, StructUIConfig } from "./types";
 export { ListView, ListViewHeader, ListViewProps } from "./crud/list-view";
 export { StructUIProvider, useStructUI } from "./provider";
 export { FieldRender, FieldRenderProps } from "./crud/form/renderer";
-export { TableView, TableViewProps } from "./crud/table-view";
+export { TableView, TableViewProps, } from "./crud/table-view";
 export { ModelForm, ModelFormProps } from "./crud/form/index";
+export { getLinkTo } from "./crud/data-table";
 export { fetcher } from "../fetcher";
