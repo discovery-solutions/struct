@@ -86,8 +86,9 @@ export function ModelForm({
       queryClient.invalidateQueries({
         predicate: (query: any) =>
           Array.isArray(query.queryKey) &&
-          query.queryKey.some((key: any) => (typeof key === "string" ? key : JSON.stringify(key)).includes(endpoint)),
+          query.queryKey.some((key: string) => String(key).includes(props.endpoint)),
       });
+
       if (mode === "register" && redirectAfterRegister) router.back();
       return res;
     },
