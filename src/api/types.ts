@@ -25,7 +25,7 @@ export interface Hooks<T, U extends StructUser = StructUser> {
   afterGet?: (ctx: HookContext<T, U> & { query: any; id?: string; result: T | T[] | null }) => Promise<T>;
   beforeSend?: (
     result: T | T[] | null,
-    ctx: HookContext<T, U> & { id?: string; method: string }
+    ctx: HookContext<T, U> & { id?: string; method: string, query?: any }
   ) => Promise<any>;
 };
 

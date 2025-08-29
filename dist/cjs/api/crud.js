@@ -63,7 +63,7 @@ class CRUDController {
             }
             else {
                 // pagination logic still on model for count/skip
-                let { page, limit, ...filter } = query;
+                let { page, limit, ...filter } = clearQuery(query);
                 page = parseInt(page || "1", 10);
                 limit = parseInt(limit || "0", 10);
                 const skip = (page - 1) * limit;
@@ -89,10 +89,10 @@ class CRUDController {
             }
             if (this.options.hooks?.beforeSend) {
                 if (id || !Array.isArray(result)) {
-                    response = await this.options.hooks.beforeSend(result, { user, id, method: "GET" });
+                    response = await this.options.hooks.beforeSend(result, { user, id, method: "GET", query });
                 }
                 else {
-                    response.data = await this.options.hooks.beforeSend(result, { user, id, method: "GET" });
+                    response.data = await this.options.hooks.beforeSend(result, { user, id, method: "GET", query });
                 }
             }
             if (!searchParams.page && !searchParams.limit && response?.data) {
@@ -248,3 +248,8 @@ class CRUDController {
     }
 }
 exports.CRUDController = CRUDController;
+const clearQuery = (query) => {
+    const cleared = { ...query };
+    delete cleared.populate;
+    return cleared;
+};

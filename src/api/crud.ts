@@ -40,7 +40,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       response = result;
     } else {
       // pagination logic still on model for count/skip
-      let { page, limit, ...filter } = query as any;
+      let { page, limit, ...filter } = clearQuery(query) as any;
       page = parseInt(page || "1", 10);
       limit = parseInt(limit || "0", 10);
       const skip = (page - 1) * limit;
@@ -67,9 +67,9 @@ export class CRUDController<T, U extends StructUser = StructUser> {
 
     if (this.options.hooks?.beforeSend) {
       if (id || !Array.isArray(result)) {
-        response = await this.options.hooks.beforeSend(result, { user, id, method: "GET" });
+        response = await this.options.hooks.beforeSend(result, { user, id, method: "GET", query });
       } else {
-        response.data = await this.options.hooks.beforeSend(result, { user, id, method: "GET" });
+        response.data = await this.options.hooks.beforeSend(result, { user, id, method: "GET", query });
       }
     }
 
@@ -255,3 +255,9 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     return parsedFilters;
   }
 }
+
+const clearQuery = (query: Record<string, any>) => {
+  const cleared: Record<string, any> = { ...query };
+  delete cleared.populate;
+  return cleared;
+};

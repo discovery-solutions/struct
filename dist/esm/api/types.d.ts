@@ -34,6 +34,7 @@ export interface Hooks<T, U extends StructUser = StructUser> {
     beforeSend?: (result: T | T[] | null, ctx: HookContext<T, U> & {
         id?: string;
         method: string;
+        query?: any;
     }) => Promise<any>;
 }
 export interface CRUDOptions<T, U extends StructUser = StructUser> {
