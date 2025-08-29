@@ -27,7 +27,8 @@ const withSession = (handler, params = {}) => {
                 if (!user)
                     return Response.json({ message: 'Unauthorized' }, { status: 401 });
                 const roles = Array.isArray(params.roles) ? params.roles : [params.roles];
-                if (params.roles && !roles.includes(user.role))
+                const isAllowed = roles.includes(user.role) || roles.includes("*") || roles.length === 0;
+                if (params.roles && !isAllowed)
                     return Response.json({ message: 'Forbidden' }, { status: 403 });
             }
             return (await Promise.all([handler({ user }, req, context)])).at(0);

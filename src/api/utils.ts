@@ -34,8 +34,9 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
           return Response.json({ message: 'Unauthorized' }, { status: 401 })
 
         const roles = Array.isArray(params.roles) ? params.roles : [params.roles];
+        const isAllowed = roles.includes(user.role) || roles.includes("*") || roles.length === 0;
 
-        if (params.roles && !roles.includes(user.role))
+        if (params.roles && !isAllowed)
           return Response.json({ message: 'Forbidden' }, { status: 403 });
       }
 
