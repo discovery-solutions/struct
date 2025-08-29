@@ -17,7 +17,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   }
 
   private getRoleForMethod(method: "GET" | "POST" | "PATCH" | "DELETE") {
-    return (this.options.roles?.[method] ?? "candidate") as StructUser["role"];
+    return (this.options.roles?.[method] ?? "*") as StructUser["role"];
   }
 
   GET = withSession<U>(async ({ user }, req, { params }) => {

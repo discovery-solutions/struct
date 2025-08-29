@@ -208,7 +208,7 @@ export class CRUDController {
         this.service = new ModelService(model);
     }
     getRoleForMethod(method) {
-        return (this.options.roles?.[method] ?? "candidate");
+        return (this.options.roles?.[method] ?? "*");
     }
 }
 const clearQuery = (query) => {

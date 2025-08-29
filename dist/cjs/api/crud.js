@@ -244,7 +244,7 @@ class CRUDController {
         this.service = new service_1.ModelService(model);
     }
     getRoleForMethod(method) {
-        return (this.options.roles?.[method] ?? "candidate");
+        return (this.options.roles?.[method] ?? "*");
     }
 }
 exports.CRUDController = CRUDController;
