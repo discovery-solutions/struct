@@ -84,11 +84,8 @@ export function ModelForm({
     onSuccess: (res) => {
       toast.success(mode === "edit" ? "Atualizado com sucesso!" : "Criado com sucesso!");
       queryClient.invalidateQueries({
-        predicate: (query: any) => {
-          console.log(props.endpoint, query.queryKey)
-          return Array.isArray(query.queryKey) &&
-            query.queryKey.some((key: string) => String(key).includes(props.endpoint));
-        }
+        predicate: (query: any) => Array.isArray(query.queryKey) &&
+          query.queryKey.some((key: string) => String(key).includes(props.endpoint)),
       });
 
       if (mode === "register" && redirectAfterRegister) router.back();
