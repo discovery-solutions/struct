@@ -43,7 +43,10 @@ export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, o
         },
         onSuccess: (res) => {
             toast.success(mode === "edit" ? "Atualizado com sucesso!" : "Criado com sucesso!");
-            queryClient.invalidateQueries({ queryKey: [endpoint] });
+            queryClient.invalidateQueries({
+                predicate: (query) => Array.isArray(query.queryKey) &&
+                    query.queryKey.some((key) => (typeof key === "string" ? key : JSON.stringify(key)).includes(endpoint)),
+            });
             if (mode === "register" && redirectAfterRegister)
                 router.back();
             return res;
