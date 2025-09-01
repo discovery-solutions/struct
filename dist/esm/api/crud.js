@@ -109,7 +109,7 @@ export class CRUDController {
             if (!original)
                 return Response.json({ message: "Not Found" }, { status: 404 });
             if (this.options.hooks?.beforeUpdate) {
-                const patched = await this.options.hooks.beforeUpdate({ user, data: body });
+                const patched = await this.options.hooks.beforeUpdate({ user, data: body, id });
                 if (patched === true)
                     return Response.json({ message: "Ok" });
                 body = { ...body, ...patched };
