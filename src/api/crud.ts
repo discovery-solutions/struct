@@ -40,7 +40,8 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       response = result;
     } else {
       // pagination logic still on model for count/skip
-      let { page, limit, ...filter } = clearQuery(query) as any;
+      let { page, limit, ...filter } = clearQuery({ ...query }) as any;
+      console.log(filter, query)
       page = parseInt(page || "1", 10);
       limit = parseInt(limit || "0", 10);
       const skip = (page - 1) * limit;
