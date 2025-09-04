@@ -48,7 +48,7 @@ export class ModelService<T> {
    * @returns {Promise<T>} The created document.
    */
   async create(data: Partial<T>): Promise<T> {
-    return (await this.model.create(data)).toObject();
+    return parseEntityToObject(await this.model.create(data));
   }
 
   /**

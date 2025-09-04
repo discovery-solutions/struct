@@ -40,7 +40,7 @@ export class ModelService {
      * @returns {Promise<T>} The created document.
      */
     async create(data) {
-        return (await this.model.create(data)).toObject();
+        return parseEntityToObject(await this.model.create(data));
     }
     /**
      * Updates a document by query.
