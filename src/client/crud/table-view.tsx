@@ -17,7 +17,7 @@ export type TableViewProps = {
   asChild?: boolean;
   modalId?: string;
   queryParams?: Record<string, any>;
-  LeftItems?: ReactNode;
+  LeftItems?: ((data: any) => ReactNode) | ReactNode;
   ListHeaderComponent?: ReactNode;
   ListEmptyComponent?: ReactNode;
   ListFooterComponent?: ReactNode;
@@ -79,7 +79,7 @@ export function TableView({
           asChild={asChild}
           search={search}
           onChange={({ target }) => setSearch(target.value)}
-          LeftItems={LeftItems}
+          LeftItems={typeof LeftItems === "function" ? LeftItems?.(filteredData) || LeftItems : LeftItems}
         />
       )}
 

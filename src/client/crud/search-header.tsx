@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import Link from "next/link";
 
-export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hideAdd = false }: { hideAdd?: boolean, asChild?: boolean; search?: string, onChange: (e: any) => any, LeftItems?: ReactNode, modalId?: string }) {
+export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hideAdd = false }: { hideAdd?: boolean, asChild?: boolean; search?: string, onChange: (e: any) => any, LeftItems?: any, modalId?: string }) {
   const { openModal } = useModalForm();
   const pathname = usePathname();
   const Struct = useStructUI();

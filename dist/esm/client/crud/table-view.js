@@ -31,7 +31,7 @@ export function TableView({ columns, asChild, modalId, hideAdd = false, endpoint
     const filteredData = search
         ? data.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
         : data;
-    return (_jsxs("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? (_jsx(SearchHeader, { modalId: modalId, hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsx(DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
+    return (_jsxs("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? (_jsx(SearchHeader, { modalId: modalId, hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: typeof LeftItems === "function" ? LeftItems?.(filteredData) || LeftItems : LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsx(DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
 }
 const Cell = ({ row, endpoint, parentAsChild, modalId, }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
