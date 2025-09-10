@@ -27,7 +27,7 @@ export const withSession = <U extends StructUser>(handler: Handler<U>, params: P
 
       if (Struct.config?.auth?.getSession) {
         console.log("[withSession] Checking user session...");
-        const session = await Struct.config?.auth?.getSession?.();
+        const session = await Struct.config?.auth?.getSession?.(req, context);
         user = session?.user as U || null;
 
         if (!user)

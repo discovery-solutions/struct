@@ -18,7 +18,7 @@ export const withSession = (handler, params = {}) => {
             }
             if (Struct.config?.auth?.getSession) {
                 console.log("[withSession] Checking user session...");
-                const session = await Struct.config?.auth?.getSession?.();
+                const session = await Struct.config?.auth?.getSession?.(req, context);
                 user = session?.user || null;
                 if (!user)
                     return Response.json({ message: 'Unauthorized' }, { status: 401 });
