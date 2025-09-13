@@ -48,12 +48,10 @@ export function DataTable({ columns, data, className, emptyText = "Nenhum result
                 >
                   {flexRender(header.column.columnDef.header, header.getContext())}
                   {header.column.getIsSorted() === "asc" ? (
-                    <ArrowUp className="ml-2 inline h-4 w-4" />
-                  ) : header.column.getIsSorted() === "desc" ? (
                     <ArrowDown className="ml-2 inline h-4 w-4" />
-                  ) : (
-                    <ArrowUpDown className="ml-2 inline h-4 w-4 text-muted-foreground" />
-                  )}
+                  ) : header.column.getIsSorted() === "desc" ? (
+                    <ArrowUp className="ml-2 inline h-4 w-4" />
+                  ) : null}
                 </Struct.Table.Head>
               ))}
             </Struct.Table.Row>
