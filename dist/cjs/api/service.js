@@ -46,7 +46,7 @@ class ModelService {
      * @returns {Promise<T>} The created document.
      */
     async create(data) {
-        return await this.model.create(data);
+        return (0, utils_1.parseEntityToObject)(await this.model.create(data));
     }
     /**
      * Updates a document by query.

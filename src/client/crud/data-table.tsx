@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from "@tanstack/react-table";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 export interface DataTableProps {
   columns: ColumnDef<any>[];
@@ -46,10 +47,13 @@ export function DataTable({ columns, data, className, emptyText = "Nenhum result
                   className="cursor-pointer select-none"
                 >
                   {flexRender(header.column.columnDef.header, header.getContext())}
-                  {{
-                    asc: " 🔼",
-                    desc: " 🔽",
-                  }[header.column.getIsSorted() as string] ?? null}
+                  {header.column.getIsSorted() === "asc" ? (
+                    <ArrowUp className="ml-2 inline h-4 w-4" />
+                  ) : header.column.getIsSorted() === "desc" ? (
+                    <ArrowDown className="ml-2 inline h-4 w-4" />
+                  ) : (
+                    <ArrowUpDown className="ml-2 inline h-4 w-4 text-muted-foreground" />
+                  )}
                 </Struct.Table.Head>
               ))}
             </Struct.Table.Row>

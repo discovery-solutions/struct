@@ -6,7 +6,7 @@ export type TableViewProps = {
     asChild?: boolean;
     modalId?: string;
     queryParams?: Record<string, any>;
-    LeftItems?: ReactNode;
+    LeftItems?: ((data: any) => ReactNode) | ReactNode;
     ListHeaderComponent?: ReactNode;
     ListEmptyComponent?: ReactNode;
     ListFooterComponent?: ReactNode;

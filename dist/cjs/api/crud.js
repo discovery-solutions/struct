@@ -64,7 +64,6 @@ class CRUDController {
             else {
                 // pagination logic still on model for count/skip
                 let { page, limit, ...filter } = clearQuery({ ...query });
-                console.log(filter, query);
                 page = parseInt(page || "1", 10);
                 limit = parseInt(limit || "0", 10);
                 const skip = (page - 1) * limit;
@@ -145,7 +144,7 @@ class CRUDController {
             if (!original)
                 return Response.json({ message: "Not Found" }, { status: 404 });
             if (this.options.hooks?.beforeUpdate) {
-                const patched = await this.options.hooks.beforeUpdate({ user, data: body });
+                const patched = await this.options.hooks.beforeUpdate({ user, data: body, id });
                 if (patched === true)
                     return Response.json({ message: "Ok" });
                 body = { ...body, ...patched };
