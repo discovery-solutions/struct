@@ -12,16 +12,16 @@ export declare class CRUDController<T, U extends StructUser = StructUser> {
     private getRoleForMethod;
     GET: (req: NextRequest, context: {
         params: Promise<any>;
-    }) => Promise<Response | undefined>;
+    }) => Promise<Response>;
     POST: (req: NextRequest, context: {
         params: Promise<any>;
-    }) => Promise<Response | undefined>;
+    }) => Promise<Response>;
     PATCH: (req: NextRequest, context: {
         params: Promise<any>;
-    }) => Promise<Response | undefined>;
+    }) => Promise<Response>;
     DELETE: (req: NextRequest, context: {
         params: Promise<any>;
-    }) => Promise<Response | undefined>;
+    }) => Promise<Response>;
     dynamic: any;
     runtime: any;
     private parseFilters;

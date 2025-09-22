@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 export type StructConfig = {
     database?: {
         startConnection: (...args: any) => Promise<any>;
+        closeConnection: () => Promise<any>;
     };
     auth?: {
         getSession?: (req?: NextRequest, context?: {

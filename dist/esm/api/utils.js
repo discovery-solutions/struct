@@ -20,19 +20,36 @@ export const withSession = (handler, params = {}) => {
                 console.log("[withSession] Checking user session...");
                 const session = await Struct.config?.auth?.getSession?.(req, context);
                 user = session?.user || null;
-                if (!user)
-                    return Response.json({ message: 'Unauthorized' }, { status: 401 });
-                const roles = Array.isArray(params.roles) ? params.roles : [params.roles];
-                const isAllowed = roles.includes(user.role) || roles.includes("*") || roles.length === 0;
-                if (params.roles && !isAllowed)
-                    return Response.json({ message: 'Forbidden' }, { status: 403 });
+                if (!user) {
+                    return Response.json({ message: "Unauthorized" }, { status: 401 });
+                }
+                const roles = Array.isArray(params.roles)
+                    ? params.roles
+                    : [params.roles];
+                const isAllowed = roles.includes(user.role) ||
+                    roles.includes("*") ||
+                    roles.length === 0;
+                if (params.roles && !isAllowed) {
+                    return Response.json({ message: "Forbidden" }, { status: 403 });
+                }
             }
-            return (await Promise.all([handler({ user }, req, context)])).at(0);
+            return await handler({ user }, req, context);
         }
         catch (err) {
-            const error = err?.flatten ? Object.values(err.flatten().fieldErrors).flat().map((msg) => `${msg || "Campo inválido"}`) : err.message || 'Internal Server Error';
+            const error = err?.flatten
+                ? Object.values(err.flatten().fieldErrors)
+                    .flat()
+                    .map((msg) => `${msg || "Campo inválido"}`)
+                : err.message || "Internal Server Error";
             console.log(error);
             return Response.json({ error }, { status: 500 });
+        }
+        finally {
+            // garante que sempre será chamado
+            if (Struct.config?.database?.closeConnection) {
+                console.log("[withSession] Closing DB connection...");
+                await Struct.config?.database?.closeConnection?.();
+            }
         }
     };
 };
