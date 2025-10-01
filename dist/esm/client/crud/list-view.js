@@ -34,6 +34,6 @@ export function ListViewHeader({ onChange }) {
         if (onChange)
             onChange(search);
     }, [search, onChange]);
-    return (_jsxs("div", { className: "flex flex-row justify-between items-center gap-4", children: [_jsx(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), _jsx(Struct.Button, { as: Link, href: pathname + "/register", className: "w-fit", children: "Adicionar Novo" })] }));
+    return (_jsxs("div", { className: "flex flex-row justify-between items-center gap-4", children: [_jsx(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), _jsx(Struct.Button, { asChild: true, className: "w-fit", children: _jsx(Link, { href: pathname + "/register", children: "Adicionar Novo" }) })] }));
 }
 ;

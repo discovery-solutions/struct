@@ -26,8 +26,10 @@ export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hi
           Adicionar Novo
         </Struct.Button>
       ) : (
-        <Struct.Button as={Link} href={pathname + "/register"} className="w-fit">
-          Adicionar Novo
+        <Struct.Button asChild className="w-fit">
+          <Link href={pathname + "/register"}>
+            Adicionar Novo
+          </Link>
         </Struct.Button>
       )}
     </div>

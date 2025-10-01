@@ -41,6 +41,6 @@ function ListViewHeader({ onChange }) {
         if (onChange)
             onChange(search);
     }, [search, onChange]);
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-row justify-between items-center gap-4", children: [(0, jsx_runtime_1.jsx)(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), (0, jsx_runtime_1.jsx)(Struct.Button, { as: link_1.default, href: pathname + "/register", className: "w-fit", children: "Adicionar Novo" })] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-row justify-between items-center gap-4", children: [(0, jsx_runtime_1.jsx)(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), (0, jsx_runtime_1.jsx)(Struct.Button, { asChild: true, className: "w-fit", children: (0, jsx_runtime_1.jsx)(link_1.default, { href: pathname + "/register", children: "Adicionar Novo" }) })] }));
 }
 ;

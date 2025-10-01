@@ -123,8 +123,10 @@ export function ListViewHeader({ onChange }: { onChange: (value: string) => any 
         value={search}
         onChange={(e: any) => setSearch(e.target.value)}
       />
-      <Struct.Button as={Link} href={pathname + "/register"} className="w-fit">
-        Adicionar Novo
+      <Struct.Button asChild className="w-fit">
+        <Link href={pathname + "/register"}>
+          Adicionar Novo
+        </Link>
       </Struct.Button>
     </div>
   );
