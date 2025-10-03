@@ -85,7 +85,7 @@ export function ListView<T>({
         <div className="flex justify-center py-4">
           <Struct.Loader />
         </div>
-      ) : error ? (
+      ) : (error && listData.length < 1) ? (
         <div className="flex flex-col items-center gap-2 py-4">
           <p className="text-center text-destructive">Erro ao carregar dados.</p>
           <Struct.Button variant="outline" onClick={() => refetch()}>Tentar novamente</Struct.Button>
