@@ -22,7 +22,7 @@ export interface ListViewProps<T> {
     LeftSideHeaderComponent?: ReactNode;
     RightSideHeaderComponent?: ReactNode;
 }
-export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;
+export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, showNewButton }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;
 export declare function ListViewHeader({ onChange }: {
     onChange: (value: string) => any;
 }): import("react/jsx-runtime").JSX.Element;

@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../../fetcher";
 import { cn } from "../utils";
 import Link from "next/link";
-export function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, }) {
+export function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, showNewButton = true }) {
     const Struct = useStructUI();
     const [search, setSearch] = useState("");
     const { data: queryData, isLoading, error, refetch, } = useQuery({
@@ -24,7 +24,7 @@ export function ListView({ data, endpoint, filters, queryParams, asChild, classN
             : arr;
     }, [data, queryData, search, filters]);
     const isEmpty = !listData || listData.length === 0;
-    return (_jsxs("div", { className: cn("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : (_jsx(SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value) })), isLoading ? (_jsx("div", { className: "flex justify-center py-4", children: _jsx(Struct.Loader, {}) })) : error ? (_jsxs("div", { className: "flex flex-col items-center gap-2 py-4", children: [_jsx("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), _jsx(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || _jsx("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : (_jsx("div", { className: cn("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => (_jsxs("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) })), ListFooterComponent] }));
+    return (_jsxs("div", { className: cn("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : (_jsx(SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), hideAdd: !showNewButton })), isLoading ? (_jsx("div", { className: "flex justify-center py-4", children: _jsx(Struct.Loader, {}) })) : error ? (_jsxs("div", { className: "flex flex-col items-center gap-2 py-4", children: [_jsx("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), _jsx(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || _jsx("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : (_jsx("div", { className: cn("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => (_jsxs("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) })), ListFooterComponent] }));
 }
 export function ListViewHeader({ onChange }) {
     const [search, setSearch] = useState("");

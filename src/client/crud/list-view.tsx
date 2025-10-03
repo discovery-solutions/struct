@@ -45,6 +45,7 @@ export function ListView<T>({
   ListFooterComponent,
   ItemSeparatorComponent,
   refetchOnMount = true,
+  showNewButton = true
 }: ListViewProps<T>) {
   const Struct = useStructUI();
   const [search, setSearch] = useState("");
@@ -76,6 +77,7 @@ export function ListView<T>({
           asChild={asChild}
           search={search}
           onChange={({ target }) => setSearch(target.value)}
+          hideAdd={!showNewButton}
         />
       )}
 
