@@ -25,4 +25,5 @@ export declare class CRUDController<T, U extends StructUser = StructUser> {
     dynamic: any;
     runtime: any;
     private parseFilters;
+    private populateQuery;
 }

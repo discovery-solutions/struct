@@ -20,17 +20,11 @@ export class CRUDController {
             }
             let result;
             let response = {};
-            const populateQuery = (q) => {
-                if (this.options.populate) {
-                    this.options.populate.forEach((p) => {
-                        q = q.populate(p);
-                    });
-                }
-                return q;
-            };
             if (id) {
                 query._id = new mongoose.Types.ObjectId(id);
-                result = await populateQuery(this.service.findOne(query));
+                let q = this.model.findOne(query); // retorna Query
+                q = this.populateQuery(q);
+                result = await q.lean(); // executa
                 response = result;
             }
             else {
@@ -40,7 +34,7 @@ export class CRUDController {
                 limit = parseInt(limit || "0", 10);
                 const skip = (page - 1) * limit;
                 const total = await this.model.countDocuments(filter);
-                let q = populateQuery(this.model.find(filter));
+                let q = this.populateQuery(this.model.find(filter));
                 if (limit > 0)
                     q = q.skip(skip).limit(limit);
                 result = await q.sort({ updatedAt: -1 }).lean();
@@ -209,6 +203,14 @@ export class CRUDController {
                 ];
             }
             return parsedFilters;
+        };
+        this.populateQuery = (q) => {
+            if (this.options.populate) {
+                this.options.populate.forEach((p) => {
+                    q = q.populate(p);
+                });
+            }
+            return q;
         };
         Struct.config.database?.startConnection?.().catch(console.error);
         this.service = new ModelService(model);
