@@ -34,9 +34,18 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     let result: T | T[] | null;
     let response: any = {};
 
+    const populateQuery = (q: any) => {
+      if (this.options.populate) {
+        this.options.populate.forEach((p: any) => {
+          q = q.populate(p);
+        });
+      }
+      return q;
+    }
+
     if (id) {
       query._id = new mongoose.Types.ObjectId(id);
-      result = await this.service.findOne(query);
+      result = await populateQuery(this.service.findOne(query));
       response = result;
     } else {
       // pagination logic still on model for count/skip
@@ -46,8 +55,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       const skip = (page - 1) * limit;
 
       const total = await this.model.countDocuments(filter);
-      let q: any = this.model.find(filter);
-      if (this.options.populate) this.options.populate.forEach((p: any) => q = q.populate(p));
+      let q: any = populateQuery(this.model.find(filter));
       if (limit > 0) q = q.skip(skip).limit(limit);
       result = await q.sort({ updatedAt: -1 }).lean() as T[];
 

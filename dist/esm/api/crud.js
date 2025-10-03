@@ -20,9 +20,17 @@ export class CRUDController {
             }
             let result;
             let response = {};
+            const populateQuery = (q) => {
+                if (this.options.populate) {
+                    this.options.populate.forEach((p) => {
+                        q = q.populate(p);
+                    });
+                }
+                return q;
+            };
             if (id) {
                 query._id = new mongoose.Types.ObjectId(id);
-                result = await this.service.findOne(query);
+                result = await populateQuery(this.service.findOne(query));
                 response = result;
             }
             else {
@@ -32,9 +40,7 @@ export class CRUDController {
                 limit = parseInt(limit || "0", 10);
                 const skip = (page - 1) * limit;
                 const total = await this.model.countDocuments(filter);
-                let q = this.model.find(filter);
-                if (this.options.populate)
-                    this.options.populate.forEach((p) => q = q.populate(p));
+                let q = populateQuery(this.model.find(filter));
                 if (limit > 0)
                     q = q.skip(skip).limit(limit);
                 result = await q.sort({ updatedAt: -1 }).lean();
