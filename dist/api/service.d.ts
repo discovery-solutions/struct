@@ -1,4 +1,5 @@
-import type { Model, FilterQuery, UpdateQuery } from "mongoose";
+import type { Model, FilterQuery, UpdateQuery, PopulateOptions } from "mongoose";
+type PopulateParam = string | PopulateOptions | Array<string | PopulateOptions>;
 /**
  * Generic Model Service to perform basic CRUD operations on any Mongoose model.
  */
@@ -16,7 +17,7 @@ export declare class ModelService<T> {
      * @param id - Document ID.
      * @returns {Promise<T | null>} The found document or null.
      */
-    findById(id: string | T, populate?: string[]): Promise<T | null>;
+    findById(id: string | T, populate?: PopulateParam): Promise<T | null>;
     /**
      * Finds multiple documents by query.
      * @param query - MongoDB filter query.
@@ -50,3 +51,4 @@ export declare class ModelService<T> {
      */
     deleteOne(query: FilterQuery<T>): Promise<void>;
 }
+export {};

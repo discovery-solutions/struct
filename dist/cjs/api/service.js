@@ -28,8 +28,13 @@ class ModelService {
      * @returns {Promise<T | null>} The found document or null.
      */
     async findById(id, populate = []) {
-        const raw = await this.model.findById(id).populate(populate).lean();
-        return (0, utils_1.parseEntityToObject)(raw);
+        let q = this.model.findById(id);
+        if (populate && (Array.isArray(populate) ? populate.length > 0 : true)) {
+            // cast necessário porque as overloads de populate no typing do mongoose são limitadas
+            q = q.populate(populate);
+        }
+        const raw = await q.lean().exec();
+        return raw ? ((0, utils_1.parseEntityToObject)(raw)) : null;
     }
     /**
      * Finds multiple documents by query.

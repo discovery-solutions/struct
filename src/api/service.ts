@@ -1,6 +1,8 @@
-import type { Model, FilterQuery, UpdateQuery } from "mongoose";
+import type { Model, FilterQuery, UpdateQuery, PopulateOptions } from "mongoose";
 import { parseEntityToObject } from "./utils";
 import mongoose from "mongoose";
+
+type PopulateParam = string | PopulateOptions | Array<string | PopulateOptions>;
 
 /**
  * Generic Model Service to perform basic CRUD operations on any Mongoose model.
@@ -27,9 +29,16 @@ export class ModelService<T> {
    * @param id - Document ID.
    * @returns {Promise<T | null>} The found document or null.
    */
-  async findById(id: string | T, populate: string[] = []): Promise<T | null> {
-    const raw = await this.model.findById(id).populate(populate).lean() as T | null;
-    return parseEntityToObject(raw);
+  async findById(id: string | T, populate: PopulateParam = []): Promise<T | null> {
+    let q: any = this.model.findById(id);
+
+    if (populate && (Array.isArray(populate) ? populate.length > 0 : true)) {
+      // cast necessário porque as overloads de populate no typing do mongoose são limitadas
+      q = q.populate(populate as any);
+    }
+
+    const raw = await q.lean().exec();
+    return raw ? (parseEntityToObject(raw)) : null;
   }
 
   /**
