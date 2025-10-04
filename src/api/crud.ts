@@ -42,19 +42,38 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       response = result;
     }
     else {
-      // pagination logic still on model for count/skip
-      let { page, limit, ...filter } = clearQuery({ ...query }) as any;
+      let { page, limit, sort, ...filter } = clearQuery({ ...query }) as any;
       page = parseInt(page || "1", 10);
       limit = parseInt(limit || "0", 10);
       const skip = (page - 1) * limit;
 
       const total = await this.model.countDocuments(filter);
+
       let q: any = this.populateQuery(this.model.find(filter));
       if (limit > 0) q = q.skip(skip).limit(limit);
-      result = await q.sort({ updatedAt: -1 }).lean() as T[];
+
+      let sortObj = this.options.sort || { updatedAt: -1 };
+
+      if (sort) {
+        sortObj = {};
+        const fields = (Array.isArray(sort) ? sort : [sort]).flatMap(s => s.split(","));
+        for (const f of fields) {
+          if (!f) continue;
+          if (f.startsWith("-")) {
+            sortObj[f.substring(1)] = -1;
+          } else {
+            sortObj[f] = 1;
+          }
+        }
+      }
+
+      q = q.sort(sortObj);
+
+      result = await q.lean() as T[];
 
       response = { page, limit, total, totalPages: limit > 0 ? Math.ceil(total / limit) : 1, data: result };
     }
+
 
     if (this.options.hooks?.afterGet) {
       if (Array.isArray(result)) {

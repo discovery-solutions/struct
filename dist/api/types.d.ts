@@ -47,6 +47,7 @@ export interface CRUDOptions<T, U extends StructUser = StructUser> {
     softDelete?: boolean;
     customParser?: (req: NextRequest) => Promise<Partial<T>>;
     roles?: Partial<Record<"GET" | "POST" | "PATCH" | "DELETE", string | string[]>>;
+    sort?: Record<string, 1 | -1> | string[];
 }
 export interface Params {
     roles?: string | string[];
