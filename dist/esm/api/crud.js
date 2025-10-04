@@ -1,7 +1,6 @@
 import mongoose, { isObjectIdOrHexString } from "mongoose";
 import { ModelService } from "./service";
 import { withSession } from "./utils";
-import { Struct } from '../';
 /**
  * Generic CRUD controller — now backed by ModelService for core ops.
  */
@@ -229,7 +228,6 @@ export class CRUDController {
             }
             return q;
         };
-        Struct.config.database?.startConnection?.().catch(console.error);
         this.service = new ModelService(model);
     }
     getRoleForMethod(method) {

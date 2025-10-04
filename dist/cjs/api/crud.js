@@ -37,7 +37,6 @@ exports.CRUDController = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const service_1 = require("./service");
 const utils_1 = require("./utils");
-const __1 = require("../");
 /**
  * Generic CRUD controller — now backed by ModelService for core ops.
  */
@@ -265,7 +264,6 @@ class CRUDController {
             }
             return q;
         };
-        __1.Struct.config.database?.startConnection?.().catch(console.error);
         this.service = new service_1.ModelService(model);
     }
     getRoleForMethod(method) {

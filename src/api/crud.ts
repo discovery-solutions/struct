@@ -3,7 +3,6 @@ import { CRUDOptions, StructUser } from "./types";
 import { ModelService } from "./service";
 import { withSession } from "./utils";
 import { NextRequest } from "next/server";
-import { Struct } from '../';
 
 /**
  * Generic CRUD controller — now backed by ModelService for core ops.
@@ -12,7 +11,6 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   private service: ModelService<T>;
 
   constructor(private model: Model<T>, private options: CRUDOptions<T, U> = {}) {
-    Struct.config.database?.startConnection?.().catch(console.error);
     this.service = new ModelService<T>(model);
   }
 
