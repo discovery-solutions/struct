@@ -112,6 +112,8 @@ class CRUDController {
             }
             if (this.options.hooks?.beforeCreate) {
                 const patched = await this.options.hooks.beforeCreate({ user, data: body });
+                if (patched === true)
+                    return Response.json({ message: "Ok" });
                 body = { ...body, ...patched };
             }
             if (this.options.createSchema) {

@@ -15,7 +15,7 @@ export interface HookContext<T, U extends StructUser = StructUser> {
 };
 
 export interface Hooks<T, U extends StructUser = StructUser> {
-  beforeCreate?: (ctx: HookContext<T, U>) => Promise<Partial<T> | void>;
+  beforeCreate?: (ctx: HookContext<T, U>) => Promise<Partial<T> | void | boolean>;
   afterCreate?: (ctx: HookContext<T, U> & { created: T }) => Promise<void>;
   beforeUpdate?: (ctx: HookContext<T, U> & { id: string }) => Promise<Partial<T> | void | boolean>;
   afterUpdate?: (ctx: HookContext<T, U> & { updated: T }) => Promise<void>;
