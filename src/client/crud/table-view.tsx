@@ -15,6 +15,7 @@ export type TableViewProps = {
   columns: any[];
   endpoint: string;
   hideAdd?: boolean;
+  hideDuplicate?: boolean;
   asChild?: boolean;
   modalId?: string;
   queryParams?: Record<string, any>;
@@ -29,6 +30,7 @@ export function TableView({
   asChild,
   modalId,
   hideAdd = false,
+  hideDuplicate = false,
   endpoint,
   queryParams,
   LeftItems,
@@ -60,6 +62,7 @@ export function TableView({
           Struct={Struct}
           router={router}
           modalId={modalId}
+          hideDuplicate={hideDuplicate}
         />
       ),
     },
@@ -112,6 +115,7 @@ const Cell = ({
   endpoint,
   parentAsChild,
   modalId,
+  hideDuplicate
 }: any) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const duplicateDialog = useConfirmDialog();
@@ -167,12 +171,14 @@ const Cell = ({
           </Struct.Dropdown.Item>
 
           {/* Duplicar */}
-          <Struct.Dropdown.Item
-            disabled={isPending}
-            onClick={() => duplicateDialog.trigger()}
-          >
-            {isPending ? "Duplicando..." : "Duplicar"}
-          </Struct.Dropdown.Item>
+          {!hideDuplicate && ( // 👈 condicional
+            <Struct.Dropdown.Item
+              disabled={isPending}
+              onClick={() => duplicateDialog.trigger()}
+            >
+              {isPending ? "Duplicando..." : "Duplicar"}
+            </Struct.Dropdown.Item>
+          )}
 
           {/* Excluir */}
           <Struct.Dropdown.Item

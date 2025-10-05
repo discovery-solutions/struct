@@ -3,6 +3,7 @@ export type TableViewProps = {
     columns: any[];
     endpoint: string;
     hideAdd?: boolean;
+    hideDuplicate?: boolean;
     asChild?: boolean;
     modalId?: string;
     queryParams?: Record<string, any>;
@@ -11,4 +12,4 @@ export type TableViewProps = {
     ListEmptyComponent?: ReactNode;
     ListFooterComponent?: ReactNode;
 };
-export declare function TableView({ columns, asChild, modalId, hideAdd, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }: TableViewProps): import("react/jsx-runtime").JSX.Element;
+export declare function TableView({ columns, asChild, modalId, hideAdd, hideDuplicate, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }: TableViewProps): import("react/jsx-runtime").JSX.Element;
