@@ -112,7 +112,30 @@ const Cell = ({
   const { queryClient, ...Struct } = useStructUI();
   const { openModal } = useModalForm();
   const pathname = usePathname();
-  const { _id } = row.original;
+  const { _id, ...originalData } = row.original;
+
+  const { mutate: duplicateItem, isPending } = Struct.useMutation({
+    mutationFn: async () => {
+      // Remove campos que não devem ser clonados
+      const cloneData = { ...originalData };
+      delete cloneData._id;
+      delete cloneData.createdAt;
+      delete cloneData.updatedAt;
+
+      return fetcher(`/api/${endpoint}`, {
+        method: "POST",
+        body: cloneData,
+      });
+    },
+    onSuccess: () => {
+      Struct.toast.success("Item duplicado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: [endpoint, "list"] });
+    },
+    onError: (err: any) => {
+      console.error(err);
+      Struct.toast.error(err.message || "Erro ao duplicar item.");
+    },
+  });
 
   return (
     <>
@@ -122,16 +145,31 @@ const Cell = ({
             <MoreVertical className="size-4" />
           </Struct.Button>
         </Struct.Dropdown.Trigger>
+
         <Struct.Dropdown.Content align="end">
+          {/* Editar */}
           <Struct.Dropdown.Item asChild>
             {parentAsChild ? (
-              <button className="w-full" onClick={() => openModal({ id: _id, modalId })}>
+              <button
+                className="w-full"
+                onClick={() => openModal({ id: _id, modalId })}
+              >
                 Editar
               </button>
             ) : (
               <Link href={`${pathname}/${_id}`}>Editar</Link>
             )}
           </Struct.Dropdown.Item>
+
+          {/* Duplicar */}
+          <Struct.Dropdown.Item
+            disabled={isPending}
+            onClick={() => duplicateItem()}
+          >
+            {isPending ? "Duplicando..." : "Duplicar"}
+          </Struct.Dropdown.Item>
+
+          {/* Excluir */}
           <Struct.Dropdown.Item
             onClick={() => setDialogOpen(true)}
             className="text-destructive"
@@ -141,6 +179,7 @@ const Cell = ({
         </Struct.Dropdown.Content>
       </Struct.Dropdown.Root>
 
+      {/* Modal de confirmação de exclusão */}
       <Struct.Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
         <Struct.Dialog.Content className="sm:max-w-[425px]">
           <Struct.Dialog.Header>

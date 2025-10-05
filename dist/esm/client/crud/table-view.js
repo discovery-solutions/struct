@@ -38,8 +38,29 @@ const Cell = ({ row, endpoint, parentAsChild, modalId, }) => {
     const { queryClient, ...Struct } = useStructUI();
     const { openModal } = useModalForm();
     const pathname = usePathname();
-    const { _id } = row.original;
-    return (_jsxs(_Fragment, { children: [_jsxs(Struct.Dropdown.Root, { children: [_jsx(Struct.Dropdown.Trigger, { asChild: true, children: _jsx(Struct.Button, { variant: "ghost", size: "icon", className: "h-8 w-8", children: _jsx(MoreVertical, { className: "size-4" }) }) }), _jsxs(Struct.Dropdown.Content, { align: "end", children: [_jsx(Struct.Dropdown.Item, { asChild: true, children: parentAsChild ? (_jsx("button", { className: "w-full", onClick: () => openModal({ id: _id, modalId }), children: "Editar" })) : (_jsx(Link, { href: `${pathname}/${_id}`, children: "Editar" })) }), _jsx(Struct.Dropdown.Item, { onClick: () => setDialogOpen(true), className: "text-destructive", children: "Excluir" })] })] }), _jsx(Struct.Dialog.Root, { open: dialogOpen, onOpenChange: setDialogOpen, children: _jsxs(Struct.Dialog.Content, { className: "sm:max-w-[425px]", children: [_jsxs(Struct.Dialog.Header, { children: [_jsx(Struct.Dialog.Title, { children: "Confirmar exclus\u00E3o" }), _jsx(Struct.Dialog.Description, { children: "Deseja excluir este item? Essa a\u00E7\u00E3o n\u00E3o poder\u00E1 ser desfeita." })] }), _jsxs(Struct.Dialog.Footer, { children: [_jsx(Struct.Button, { variant: "outline", onClick: () => setDialogOpen(false), children: "Cancelar" }), _jsx(Struct.Button, { variant: "destructive", onClick: () => {
+    const { _id, ...originalData } = row.original;
+    const { mutate: duplicateItem, isPending } = Struct.useMutation({
+        mutationFn: async () => {
+            // Remove campos que não devem ser clonados
+            const cloneData = { ...originalData };
+            delete cloneData._id;
+            delete cloneData.createdAt;
+            delete cloneData.updatedAt;
+            return fetcher(`/api/${endpoint}`, {
+                method: "POST",
+                body: cloneData,
+            });
+        },
+        onSuccess: () => {
+            Struct.toast.success("Item duplicado com sucesso!");
+            queryClient.invalidateQueries({ queryKey: [endpoint, "list"] });
+        },
+        onError: (err) => {
+            console.error(err);
+            Struct.toast.error(err.message || "Erro ao duplicar item.");
+        },
+    });
+    return (_jsxs(_Fragment, { children: [_jsxs(Struct.Dropdown.Root, { children: [_jsx(Struct.Dropdown.Trigger, { asChild: true, children: _jsx(Struct.Button, { variant: "ghost", size: "icon", className: "h-8 w-8", children: _jsx(MoreVertical, { className: "size-4" }) }) }), _jsxs(Struct.Dropdown.Content, { align: "end", children: [_jsx(Struct.Dropdown.Item, { asChild: true, children: parentAsChild ? (_jsx("button", { className: "w-full", onClick: () => openModal({ id: _id, modalId }), children: "Editar" })) : (_jsx(Link, { href: `${pathname}/${_id}`, children: "Editar" })) }), _jsx(Struct.Dropdown.Item, { disabled: isPending, onClick: () => duplicateItem(), children: isPending ? "Duplicando..." : "Duplicar" }), _jsx(Struct.Dropdown.Item, { onClick: () => setDialogOpen(true), className: "text-destructive", children: "Excluir" })] })] }), _jsx(Struct.Dialog.Root, { open: dialogOpen, onOpenChange: setDialogOpen, children: _jsxs(Struct.Dialog.Content, { className: "sm:max-w-[425px]", children: [_jsxs(Struct.Dialog.Header, { children: [_jsx(Struct.Dialog.Title, { children: "Confirmar exclus\u00E3o" }), _jsx(Struct.Dialog.Description, { children: "Deseja excluir este item? Essa a\u00E7\u00E3o n\u00E3o poder\u00E1 ser desfeita." })] }), _jsxs(Struct.Dialog.Footer, { children: [_jsx(Struct.Button, { variant: "outline", onClick: () => setDialogOpen(false), children: "Cancelar" }), _jsx(Struct.Button, { variant: "destructive", onClick: () => {
                                         fetcher(`/api/${endpoint}/${_id}`, { method: "DELETE" })
                                             .then(() => {
                                             Struct.toast.success("Excluído com sucesso");

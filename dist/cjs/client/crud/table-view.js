@@ -44,8 +44,29 @@ const Cell = ({ row, endpoint, parentAsChild, modalId, }) => {
     const { queryClient, ...Struct } = (0, provider_1.useStructUI)();
     const { openModal } = (0, modal_1.useModalForm)();
     const pathname = (0, navigation_1.usePathname)();
-    const { _id } = row.original;
-    return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)(Struct.Dropdown.Root, { children: [(0, jsx_runtime_1.jsx)(Struct.Dropdown.Trigger, { asChild: true, children: (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "ghost", size: "icon", className: "h-8 w-8", children: (0, jsx_runtime_1.jsx)(lucide_react_1.MoreVertical, { className: "size-4" }) }) }), (0, jsx_runtime_1.jsxs)(Struct.Dropdown.Content, { align: "end", children: [(0, jsx_runtime_1.jsx)(Struct.Dropdown.Item, { asChild: true, children: parentAsChild ? ((0, jsx_runtime_1.jsx)("button", { className: "w-full", onClick: () => openModal({ id: _id, modalId }), children: "Editar" })) : ((0, jsx_runtime_1.jsx)(link_1.default, { href: `${pathname}/${_id}`, children: "Editar" })) }), (0, jsx_runtime_1.jsx)(Struct.Dropdown.Item, { onClick: () => setDialogOpen(true), className: "text-destructive", children: "Excluir" })] })] }), (0, jsx_runtime_1.jsx)(Struct.Dialog.Root, { open: dialogOpen, onOpenChange: setDialogOpen, children: (0, jsx_runtime_1.jsxs)(Struct.Dialog.Content, { className: "sm:max-w-[425px]", children: [(0, jsx_runtime_1.jsxs)(Struct.Dialog.Header, { children: [(0, jsx_runtime_1.jsx)(Struct.Dialog.Title, { children: "Confirmar exclus\u00E3o" }), (0, jsx_runtime_1.jsx)(Struct.Dialog.Description, { children: "Deseja excluir este item? Essa a\u00E7\u00E3o n\u00E3o poder\u00E1 ser desfeita." })] }), (0, jsx_runtime_1.jsxs)(Struct.Dialog.Footer, { children: [(0, jsx_runtime_1.jsx)(Struct.Button, { variant: "outline", onClick: () => setDialogOpen(false), children: "Cancelar" }), (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "destructive", onClick: () => {
+    const { _id, ...originalData } = row.original;
+    const { mutate: duplicateItem, isPending } = Struct.useMutation({
+        mutationFn: async () => {
+            // Remove campos que não devem ser clonados
+            const cloneData = { ...originalData };
+            delete cloneData._id;
+            delete cloneData.createdAt;
+            delete cloneData.updatedAt;
+            return (0, fetcher_1.fetcher)(`/api/${endpoint}`, {
+                method: "POST",
+                body: cloneData,
+            });
+        },
+        onSuccess: () => {
+            Struct.toast.success("Item duplicado com sucesso!");
+            queryClient.invalidateQueries({ queryKey: [endpoint, "list"] });
+        },
+        onError: (err) => {
+            console.error(err);
+            Struct.toast.error(err.message || "Erro ao duplicar item.");
+        },
+    });
+    return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)(Struct.Dropdown.Root, { children: [(0, jsx_runtime_1.jsx)(Struct.Dropdown.Trigger, { asChild: true, children: (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "ghost", size: "icon", className: "h-8 w-8", children: (0, jsx_runtime_1.jsx)(lucide_react_1.MoreVertical, { className: "size-4" }) }) }), (0, jsx_runtime_1.jsxs)(Struct.Dropdown.Content, { align: "end", children: [(0, jsx_runtime_1.jsx)(Struct.Dropdown.Item, { asChild: true, children: parentAsChild ? ((0, jsx_runtime_1.jsx)("button", { className: "w-full", onClick: () => openModal({ id: _id, modalId }), children: "Editar" })) : ((0, jsx_runtime_1.jsx)(link_1.default, { href: `${pathname}/${_id}`, children: "Editar" })) }), (0, jsx_runtime_1.jsx)(Struct.Dropdown.Item, { disabled: isPending, onClick: () => duplicateItem(), children: isPending ? "Duplicando..." : "Duplicar" }), (0, jsx_runtime_1.jsx)(Struct.Dropdown.Item, { onClick: () => setDialogOpen(true), className: "text-destructive", children: "Excluir" })] })] }), (0, jsx_runtime_1.jsx)(Struct.Dialog.Root, { open: dialogOpen, onOpenChange: setDialogOpen, children: (0, jsx_runtime_1.jsxs)(Struct.Dialog.Content, { className: "sm:max-w-[425px]", children: [(0, jsx_runtime_1.jsxs)(Struct.Dialog.Header, { children: [(0, jsx_runtime_1.jsx)(Struct.Dialog.Title, { children: "Confirmar exclus\u00E3o" }), (0, jsx_runtime_1.jsx)(Struct.Dialog.Description, { children: "Deseja excluir este item? Essa a\u00E7\u00E3o n\u00E3o poder\u00E1 ser desfeita." })] }), (0, jsx_runtime_1.jsxs)(Struct.Dialog.Footer, { children: [(0, jsx_runtime_1.jsx)(Struct.Button, { variant: "outline", onClick: () => setDialogOpen(false), children: "Cancelar" }), (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "destructive", onClick: () => {
                                         (0, fetcher_1.fetcher)(`/api/${endpoint}/${_id}`, { method: "DELETE" })
                                             .then(() => {
                                             Struct.toast.success("Excluído com sucesso");
