@@ -33,10 +33,15 @@ export class ModelService {
     /**
      * Finds multiple documents by query.
      * @param query - MongoDB filter query.
+     * @param populate - Fields to populate.
      * @returns {Promise<T[]>} Array of documents.
      */
-    async findMany(query = {}) {
-        const raw = await this.model.find(query).lean();
+    async findMany(query = {}, populate = []) {
+        let q = this.model.find(query);
+        if (populate && (Array.isArray(populate) ? populate.length > 0 : true)) {
+            q = q.populate(populate);
+        }
+        const raw = await q.lean().exec();
         return parseEntityToObject(raw);
     }
     /**

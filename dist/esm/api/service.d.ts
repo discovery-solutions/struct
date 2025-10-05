@@ -21,9 +21,10 @@ export declare class ModelService<T> {
     /**
      * Finds multiple documents by query.
      * @param query - MongoDB filter query.
+     * @param populate - Fields to populate.
      * @returns {Promise<T[]>} Array of documents.
      */
-    findMany(query?: FilterQuery<T>): Promise<T[]>;
+    findMany(query?: FilterQuery<T>, populate?: PopulateParam): Promise<T[]>;
     /**
      * Creates a new document.
      * @param data - Document data.
