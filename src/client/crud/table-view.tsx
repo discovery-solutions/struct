@@ -1,12 +1,13 @@
 "use client";
+import { ConfirmDialog, useConfirmDialog } from "../confirm-dialog";
 import { useRouter, usePathname } from "next/navigation";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState, ReactNode } from "react";
 import { useModalForm } from "./form/modal";
 import { MoreVertical } from "lucide-react";
 import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
 import { DataTable } from "./data-table";
-import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../../fetcher";
 import Link from "next/link";
 
@@ -79,7 +80,11 @@ export function TableView({
           asChild={asChild}
           search={search}
           onChange={({ target }) => setSearch(target.value)}
-          LeftItems={typeof LeftItems === "function" ? LeftItems?.(filteredData) || LeftItems : LeftItems}
+          LeftItems={
+            typeof LeftItems === "function"
+              ? LeftItems?.(filteredData) || LeftItems
+              : LeftItems
+          }
         />
       )}
 
@@ -108,15 +113,15 @@ const Cell = ({
   parentAsChild,
   modalId,
 }: any) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const duplicateDialog = useConfirmDialog();
   const { queryClient, ...Struct } = useStructUI();
   const { openModal } = useModalForm();
   const pathname = usePathname();
   const { _id, ...originalData } = row.original;
 
-  const { mutate: duplicateItem, isPending } = Struct.useMutation({
+  const { mutate: duplicateItem, isPending } = useMutation({
     mutationFn: async () => {
-      // Remove campos que não devem ser clonados
       const cloneData = { ...originalData };
       delete cloneData._id;
       delete cloneData.createdAt;
@@ -164,14 +169,14 @@ const Cell = ({
           {/* Duplicar */}
           <Struct.Dropdown.Item
             disabled={isPending}
-            onClick={() => duplicateItem()}
+            onClick={() => duplicateDialog.trigger()}
           >
             {isPending ? "Duplicando..." : "Duplicar"}
           </Struct.Dropdown.Item>
 
           {/* Excluir */}
           <Struct.Dropdown.Item
-            onClick={() => setDialogOpen(true)}
+            onClick={() => setDeleteDialogOpen(true)}
             className="text-destructive"
           >
             Excluir
@@ -179,40 +184,32 @@ const Cell = ({
         </Struct.Dropdown.Content>
       </Struct.Dropdown.Root>
 
-      {/* Modal de confirmação de exclusão */}
-      <Struct.Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-        <Struct.Dialog.Content className="sm:max-w-[425px]">
-          <Struct.Dialog.Header>
-            <Struct.Dialog.Title>Confirmar exclusão</Struct.Dialog.Title>
-            <Struct.Dialog.Description>
-              Deseja excluir este item? Essa ação não poderá ser desfeita.
-            </Struct.Dialog.Description>
-          </Struct.Dialog.Header>
-          <Struct.Dialog.Footer>
-            <Struct.Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancelar
-            </Struct.Button>
-            <Struct.Button
-              variant="destructive"
-              onClick={() => {
-                fetcher(`/api/${endpoint}/${_id}`, { method: "DELETE" })
-                  .then(() => {
-                    Struct.toast.success("Excluído com sucesso");
-                    queryClient.invalidateQueries({ queryKey: [endpoint, "list"] });
-                    setDialogOpen(false);
-                  })
-                  .catch((err) => {
-                    Struct.toast.error(err.message || "Erro ao excluir");
-                    console.error(err);
-                    setDialogOpen(false);
-                  });
-              }}
-            >
-              Confirmar
-            </Struct.Button>
-          </Struct.Dialog.Footer>
-        </Struct.Dialog.Content>
-      </Struct.Dialog.Root>
+      {/* 🔁 Confirmação de duplicação */}
+      <ConfirmDialog
+        open={duplicateDialog.open}
+        onOpenChange={duplicateDialog.setOpen}
+        title="Duplicar item?"
+        description="Tem certeza que deseja duplicar este item?"
+        variant="default"
+        onPress={() => duplicateItem()}
+        onSuccess={() => duplicateDialog.setOpen(false)}
+      />
+
+      {/* 🗑️ Confirmação de exclusão */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Confirmar exclusão"
+        description="Deseja realmente excluir este item? Essa ação não poderá ser desfeita."
+        endpoint={endpoint}
+        params={{ id: _id }}
+        method="DELETE"
+        variant="destructive"
+        onSuccess={() => {
+          Struct.toast.success("Excluído com sucesso!");
+          queryClient.invalidateQueries({ queryKey: [endpoint, "list"] });
+        }}
+      />
     </>
   );
 };
