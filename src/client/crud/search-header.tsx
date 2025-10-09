@@ -2,16 +2,16 @@
 import { useModalForm } from "./form/modal";
 import { useStructUI } from "../provider";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { cn } from "../utils";
 import Link from "next/link";
 
-export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hideAdd = false }: { hideAdd?: boolean, asChild?: boolean; search?: string, onChange: (e: any) => any, LeftItems?: any, modalId?: string }) {
+export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hideAdd = false, className }: { hideAdd?: boolean, asChild?: boolean; search?: string, onChange: (e: any) => any, LeftItems?: any, modalId?: string, className?: string }) {
   const { openModal } = useModalForm();
   const pathname = usePathname();
   const Struct = useStructUI();
 
   return (
-    <div className="flex flex-row justify-between items-center gap-4">
+    <div className={cn("flex flex-row justify-between items-center gap-4", className)}>
       <div className="flex w-full flex-row items-center gap-4">
         <Struct.Input
           placeholder="Pesquisar..."
