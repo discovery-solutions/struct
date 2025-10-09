@@ -15,18 +15,18 @@ export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hi
       <div className="flex w-full flex-row items-center gap-4">
         <Struct.Input
           placeholder="Pesquisar..."
-          className="max-w-xs"
+          className="w-full md:max-w-xs"
           value={search}
           onChange={onChange}
         />
         {LeftItems}
       </div>
       {(hideAdd) ? (null) : asChild ? (
-        <Struct.Button onClick={() => openModal({ modalId })} className="w-fit">
+        <Struct.Button onClick={() => openModal({ modalId })} className="w-full md:w-fit">
           Adicionar Novo
         </Struct.Button>
       ) : (
-        <Struct.Button asChild className="w-fit">
+        <Struct.Button asChild className="w-full md:w-fit">
           <Link href={pathname + "/register"}>
             Adicionar Novo
           </Link>
