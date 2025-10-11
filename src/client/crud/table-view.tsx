@@ -16,6 +16,7 @@ export type TableViewProps = {
   endpoint: string;
   hideAdd?: boolean;
   hideDuplicate?: boolean;
+  hideOptions?: boolean;
   asChild?: boolean;
   modalId?: string;
   queryParams?: Record<string, any>;
@@ -31,6 +32,7 @@ export function TableView({
   modalId,
   hideAdd = false,
   hideDuplicate = false,
+  hideOptions = false,
   endpoint,
   queryParams,
   LeftItems,
@@ -51,7 +53,7 @@ export function TableView({
 
   const enhancedColumns = [
     ...(columns || []),
-    {
+    ...(hideOptions ? [] : [{
       id: "actions",
       header: "Ações",
       cell: ({ row }: any) => (
@@ -65,7 +67,7 @@ export function TableView({
           hideDuplicate={hideDuplicate}
         />
       ),
-    },
+    }]),
   ];
 
   const filteredData = search
@@ -115,7 +117,7 @@ const Cell = ({
   endpoint,
   parentAsChild,
   modalId,
-  hideDuplicate
+  hideDuplicate,
 }: any) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const duplicateDialog = useConfirmDialog();

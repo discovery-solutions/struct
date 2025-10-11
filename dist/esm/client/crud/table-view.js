@@ -11,7 +11,7 @@ import { useStructUI } from "../provider";
 import { DataTable } from "./data-table";
 import { fetcher } from "../../fetcher";
 import Link from "next/link";
-export function TableView({ columns, asChild, modalId, hideAdd = false, hideDuplicate = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }) {
+export function TableView({ columns, asChild, modalId, hideAdd = false, hideDuplicate = false, hideOptions = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }) {
     const [search, setSearch] = useState("");
     const Struct = useStructUI();
     const router = useRouter();
@@ -23,11 +23,11 @@ export function TableView({ columns, asChild, modalId, hideAdd = false, hideDupl
     });
     const enhancedColumns = [
         ...(columns || []),
-        {
-            id: "actions",
-            header: "Ações",
-            cell: ({ row }) => (_jsx(Cell, { parentAsChild: asChild, row: row, endpoint: endpoint, Struct: Struct, router: router, modalId: modalId, hideDuplicate: hideDuplicate })),
-        },
+        ...(hideOptions ? [] : [{
+                id: "actions",
+                header: "Ações",
+                cell: ({ row }) => (_jsx(Cell, { parentAsChild: asChild, row: row, endpoint: endpoint, Struct: Struct, router: router, modalId: modalId, hideDuplicate: hideDuplicate })),
+            }]),
     ];
     const filteredData = search
         ? data.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
@@ -36,7 +36,7 @@ export function TableView({ columns, asChild, modalId, hideAdd = false, hideDupl
                     ? LeftItems?.(filteredData) || LeftItems
                     : LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsx(DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
 }
-const Cell = ({ row, endpoint, parentAsChild, modalId, hideDuplicate }) => {
+const Cell = ({ row, endpoint, parentAsChild, modalId, hideDuplicate, }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const duplicateDialog = useConfirmDialog();
     const { queryClient, ...Struct } = useStructUI();

@@ -17,7 +17,7 @@ const provider_1 = require("../provider");
 const data_table_1 = require("./data-table");
 const fetcher_1 = require("../../fetcher");
 const link_1 = __importDefault(require("next/link"));
-function TableView({ columns, asChild, modalId, hideAdd = false, hideDuplicate = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }) {
+function TableView({ columns, asChild, modalId, hideAdd = false, hideDuplicate = false, hideOptions = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }) {
     const [search, setSearch] = (0, react_1.useState)("");
     const Struct = (0, provider_1.useStructUI)();
     const router = (0, navigation_1.useRouter)();
@@ -29,11 +29,11 @@ function TableView({ columns, asChild, modalId, hideAdd = false, hideDuplicate =
     });
     const enhancedColumns = [
         ...(columns || []),
-        {
-            id: "actions",
-            header: "Ações",
-            cell: ({ row }) => ((0, jsx_runtime_1.jsx)(Cell, { parentAsChild: asChild, row: row, endpoint: endpoint, Struct: Struct, router: router, modalId: modalId, hideDuplicate: hideDuplicate })),
-        },
+        ...(hideOptions ? [] : [{
+                id: "actions",
+                header: "Ações",
+                cell: ({ row }) => ((0, jsx_runtime_1.jsx)(Cell, { parentAsChild: asChild, row: row, endpoint: endpoint, Struct: Struct, router: router, modalId: modalId, hideDuplicate: hideDuplicate })),
+            }]),
     ];
     const filteredData = search
         ? data.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
@@ -42,7 +42,7 @@ function TableView({ columns, asChild, modalId, hideAdd = false, hideDuplicate =
                     ? LeftItems?.(filteredData) || LeftItems
                     : LeftItems })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center h-full", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : filteredData.length === 0 ? (ListEmptyComponent ?? ((0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : ((0, jsx_runtime_1.jsx)(data_table_1.DataTable, { data: filteredData, columns: enhancedColumns })), ListFooterComponent] }));
 }
-const Cell = ({ row, endpoint, parentAsChild, modalId, hideDuplicate }) => {
+const Cell = ({ row, endpoint, parentAsChild, modalId, hideDuplicate, }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = (0, react_1.useState)(false);
     const duplicateDialog = (0, confirm_dialog_1.useConfirmDialog)();
     const { queryClient, ...Struct } = (0, provider_1.useStructUI)();
