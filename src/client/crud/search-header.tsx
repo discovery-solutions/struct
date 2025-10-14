@@ -11,7 +11,7 @@ export function SearchHeader({ asChild, search, onChange, LeftItems, modalId, hi
   const Struct = useStructUI();
 
   return (
-    <div className={cn("flex flex-row justify-between items-center gap-4", className)}>
+    <div className={cn("flex flex-col md:flex-row justify-between items-center gap-4", className)}>
       <div className="flex w-full flex-row items-center gap-4">
         <Struct.Input
           placeholder="Pesquisar..."
