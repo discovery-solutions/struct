@@ -9,3 +9,4 @@ export { ModelForm, ModelFormProps } from "./crud/form/index";
 export { SearchHeader } from "./crud/search-header";
 export { getLinkTo } from "./crud/data-table";
 export { fetcher } from "../fetcher";
+export { toLink } from "./utils";
