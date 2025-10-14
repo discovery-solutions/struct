@@ -15,6 +15,7 @@ export type TableViewProps = {
   columns: any[];
   endpoint: string;
   hideAdd?: boolean;
+  hideEdit?: boolean;
   hideDuplicate?: boolean;
   hideOptions?: boolean;
   asChild?: boolean;
@@ -31,6 +32,7 @@ export function TableView({
   asChild,
   modalId,
   hideAdd = false,
+  hideEdit = false,
   hideDuplicate = false,
   hideOptions = false,
   endpoint,
@@ -64,6 +66,7 @@ export function TableView({
           Struct={Struct}
           router={router}
           modalId={modalId}
+          hideEdit={hideEdit}
           hideDuplicate={hideDuplicate}
         />
       ),
@@ -118,6 +121,7 @@ const Cell = ({
   parentAsChild,
   modalId,
   hideDuplicate,
+  hideEdit,
 }: any) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const duplicateDialog = useConfirmDialog();
@@ -159,18 +163,20 @@ const Cell = ({
 
         <Struct.Dropdown.Content align="end">
           {/* Editar */}
-          <Struct.Dropdown.Item asChild>
-            {parentAsChild ? (
-              <button
-                className="w-full"
-                onClick={() => openModal({ id: _id, modalId })}
-              >
-                Editar
-              </button>
-            ) : (
-              <Link href={`${pathname}/${_id}`}>Editar</Link>
-            )}
-          </Struct.Dropdown.Item>
+          {!hideEdit && (
+            <Struct.Dropdown.Item asChild>
+              {parentAsChild ? (
+                <button
+                  className="w-full"
+                  onClick={() => openModal({ id: _id, modalId })}
+                >
+                  Editar
+                </button>
+              ) : (
+                <Link href={`${pathname}/${_id}`}>Editar</Link>
+              )}
+            </Struct.Dropdown.Item>
+          )}
 
           {/* Duplicar */}
           {!hideDuplicate && ( // 👈 condicional
