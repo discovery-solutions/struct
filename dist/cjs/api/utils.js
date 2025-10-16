@@ -18,7 +18,7 @@ const withSession = (handler, params = {}) => {
             let user = null;
             if (config_1.Struct.config?.database?.startConnection) {
                 console.log("[withSession] Starting DB connection...");
-                await config_1.Struct.config?.database?.startConnection?.();
+                await config_1.Struct.config?.database?.startConnection?.(params?.database);
             }
             if (config_1.Struct.config?.auth?.getSession) {
                 console.log("[withSession] Checking user session...");
@@ -52,7 +52,7 @@ const withSession = (handler, params = {}) => {
             // garante que sempre será chamado
             if (config_1.Struct.config?.database?.closeConnection) {
                 console.log("[withSession] Closing DB connection...");
-                await config_1.Struct.config?.database?.closeConnection?.();
+                await config_1.Struct.config?.database?.closeConnection?.(params?.database);
             }
         }
     };

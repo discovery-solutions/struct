@@ -51,6 +51,7 @@ export interface CRUDOptions<T, U extends StructUser = StructUser> {
 }
 export interface Params {
     roles?: string | string[];
+    database?: string;
 }
 export type Handler<U extends StructUser> = (session: {
     user: U | null;
