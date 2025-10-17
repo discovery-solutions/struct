@@ -25,7 +25,7 @@ export const withSession = <U extends StructUser>(
 
       if (Struct.config?.database?.startConnection) {
         console.log("[withSession] Starting DB connection...");
-        await Struct.config?.database?.startConnection?.(params?.database);
+        await Promise.resolve(Struct.config?.database?.startConnection?.(params?.database));
       }
 
       if (Struct.config?.auth?.getSession) {
@@ -64,7 +64,7 @@ export const withSession = <U extends StructUser>(
       // garante que sempre será chamado
       if (Struct.config?.database?.closeConnection) {
         console.log("[withSession] Closing DB connection...");
-        await Struct.config?.database?.closeConnection?.(params?.database);
+        await Promise.resolve(Struct.config?.database?.closeConnection?.(params?.database));
       }
     }
   };
