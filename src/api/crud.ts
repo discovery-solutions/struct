@@ -3,14 +3,17 @@ import { CRUDOptions, StructUser } from "./types";
 import { ModelService } from "./service";
 import { withSession } from "./utils";
 import { NextRequest } from "next/server";
+import { Struct } from "../config";
 
 /**
  * Generic CRUD controller — now backed by ModelService for core ops.
  */
 export class CRUDController<T, U extends StructUser = StructUser> {
   private service: ModelService<T>;
+  private promise?: Promise<any>;
 
   constructor(private model: Model<T>, private options: CRUDOptions<T, U> = {}) {
+    this.promise = Struct.config?.database?.startConnection();
     this.service = new ModelService<T>(model);
   }
 
@@ -19,6 +22,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   }
 
   GET = withSession<U>(async ({ user }, req, { params }) => {
+    await this.promise;
     let { id } = (await params) || {};
     const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
     const query: Record<string, any> = this.parseFilters(searchParams);
@@ -103,6 +107,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   }, { roles: this.getRoleForMethod("GET") });
 
   POST = withSession<U>(async ({ user }, req) => {
+    await this.promise;
     let body: any;
     try {
       body = this.options.customParser ? await this.options.customParser(req) : await req.json();
@@ -144,6 +149,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   }, { roles: this.getRoleForMethod("POST") });
 
   PATCH = withSession<U>(async ({ user }, req, { params }) => {
+    await this.promise;
     const [id] = (await params).id as string[];
     let body = this.options.customParser
       ? await this.options.customParser(req)
@@ -189,6 +195,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   }, { roles: this.getRoleForMethod("PATCH") });
 
   DELETE = withSession<U>(async ({ user }, _, { params }) => {
+    await this.promise;
     const { id: [id] } = (await params) || { id: [undefined] };
 
     if (!id)

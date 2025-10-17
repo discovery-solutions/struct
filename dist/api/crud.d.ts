@@ -8,6 +8,7 @@ export declare class CRUDController<T, U extends StructUser = StructUser> {
     private model;
     private options;
     private service;
+    private promise?;
     constructor(model: Model<T>, options?: CRUDOptions<T, U>);
     private getRoleForMethod;
     GET: (req: NextRequest, context: {

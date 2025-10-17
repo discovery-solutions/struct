@@ -37,6 +37,7 @@ exports.CRUDController = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const service_1 = require("./service");
 const utils_1 = require("./utils");
+const config_1 = require("../config");
 /**
  * Generic CRUD controller — now backed by ModelService for core ops.
  */
@@ -45,6 +46,7 @@ class CRUDController {
         this.model = model;
         this.options = options;
         this.GET = (0, utils_1.withSession)(async ({ user }, req, { params }) => {
+            await this.promise;
             let { id } = (await params) || {};
             const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
             const query = this.parseFilters(searchParams);
@@ -117,6 +119,7 @@ class CRUDController {
             return Response.json(response);
         }, { roles: this.getRoleForMethod("GET") });
         this.POST = (0, utils_1.withSession)(async ({ user }, req) => {
+            await this.promise;
             let body;
             try {
                 body = this.options.customParser ? await this.options.customParser(req) : await req.json();
@@ -152,6 +155,7 @@ class CRUDController {
             return Response.json(response);
         }, { roles: this.getRoleForMethod("POST") });
         this.PATCH = (0, utils_1.withSession)(async ({ user }, req, { params }) => {
+            await this.promise;
             const [id] = (await params).id;
             let body = this.options.customParser
                 ? await this.options.customParser(req)
@@ -183,6 +187,7 @@ class CRUDController {
             return Response.json({ message: "Update failed" }, { status: 500 });
         }, { roles: this.getRoleForMethod("PATCH") });
         this.DELETE = (0, utils_1.withSession)(async ({ user }, _, { params }) => {
+            await this.promise;
             const { id: [id] } = (await params) || { id: [undefined] };
             if (!id)
                 return Response.json({ message: "Not Found" }, { status: 404 });
@@ -264,6 +269,7 @@ class CRUDController {
             }
             return q;
         };
+        this.promise = config_1.Struct.config?.database?.startConnection();
         this.service = new service_1.ModelService(model);
     }
     getRoleForMethod(method) {
