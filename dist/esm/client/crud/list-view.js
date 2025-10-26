@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../../fetcher";
 import { cn } from "../utils";
 import Link from "next/link";
-export function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, showNewButton = true, enablePagination = false, pageSize = 10 }) {
+export function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, showNewButton = true, enablePagination = false, pageSize = 10, hideAdd = false, }) {
     const Struct = useStructUI();
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -80,9 +80,9 @@ export function ListView({ data, endpoint, filters, queryParams, asChild, classN
                             return (_jsx(Struct.Button, { variant: page === pageNum ? "default" : "outline", size: "sm", onClick: () => handlePageChange(pageNum), children: pageNum }, pageNum));
                         }), _jsx(Struct.Button, { variant: "outline", size: "sm", onClick: () => handlePageChange(page + 1), disabled: page >= totalPages, children: "Pr\u00F3xima" })] })] }));
     };
-    return (_jsxs("div", { className: cn("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : (_jsx(SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), hideAdd: !showNewButton })), isLoading ? (_jsx("div", { className: "flex justify-center py-4", children: _jsx(Struct.Loader, {}) })) : (error && listData.length < 1) ? (_jsxs("div", { className: "flex flex-col items-center gap-2 py-4", children: [_jsx("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), _jsx(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || _jsx("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : (_jsxs(_Fragment, { children: [_jsx("div", { className: cn("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => (_jsxs("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) }), renderPagination()] })), ListFooterComponent] }));
+    return (_jsxs("div", { className: cn("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : (_jsx(SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), hideAdd: hideAdd === false ? false : !showNewButton })), isLoading ? (_jsx("div", { className: "flex justify-center py-4", children: _jsx(Struct.Loader, {}) })) : (error && listData.length < 1) ? (_jsxs("div", { className: "flex flex-col items-center gap-2 py-4", children: [_jsx("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), _jsx(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || _jsx("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : (_jsxs(_Fragment, { children: [_jsx("div", { className: cn("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => (_jsxs("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) }), renderPagination()] })), ListFooterComponent] }));
 }
-export function ListViewHeader({ onChange }) {
+export function ListViewHeader({ onChange, hideAdd = false }) {
     const [search, setSearch] = useState("");
     const pathname = usePathname();
     const Struct = useStructUI();
@@ -90,5 +90,5 @@ export function ListViewHeader({ onChange }) {
         if (onChange)
             onChange(search);
     }, [search, onChange]);
-    return (_jsxs("div", { className: "flex flex-row justify-between items-center gap-4", children: [_jsx(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), _jsx(Struct.Button, { asChild: true, className: "w-fit", children: _jsx(Link, { href: pathname + "/register", children: "Adicionar Novo" }) })] }));
+    return (_jsxs("div", { className: "flex flex-row justify-between items-center gap-4", children: [_jsx(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), (!hideAdd) && (_jsx(Struct.Button, { asChild: true, className: "w-fit", children: _jsx(Link, { href: pathname + "/register", children: "Adicionar Novo" }) }))] }));
 }

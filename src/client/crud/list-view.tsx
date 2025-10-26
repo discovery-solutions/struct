@@ -38,6 +38,7 @@ export interface ListViewProps<T> {
   RightSideHeaderComponent?: ReactNode;
   enablePagination?: boolean;
   pageSize?: number;
+  hideAdd?: boolean;
 }
 
 export function ListView<T>({
@@ -57,7 +58,8 @@ export function ListView<T>({
   refetchOnMount = true,
   showNewButton = true,
   enablePagination = false,
-  pageSize = 10
+  pageSize = 10,
+  hideAdd = false,
 }: ListViewProps<T>) {
   const Struct = useStructUI();
   const [search, setSearch] = useState("");
@@ -189,7 +191,7 @@ export function ListView<T>({
           asChild={asChild}
           search={search}
           onChange={({ target }) => setSearch(target.value)}
-          hideAdd={!showNewButton}
+          hideAdd={hideAdd === false ? false : !showNewButton}
         />
       )}
 
@@ -224,7 +226,7 @@ export function ListView<T>({
   )
 }
 
-export function ListViewHeader({ onChange }: { onChange: (value: string) => any }) {
+export function ListViewHeader({ onChange, hideAdd = false }: { onChange: (value: string) => any, hideAdd: boolean }) {
   const [search, setSearch] = useState("");
   const pathname = usePathname();
   const Struct = useStructUI();
@@ -241,11 +243,13 @@ export function ListViewHeader({ onChange }: { onChange: (value: string) => any 
         value={search}
         onChange={(e: any) => setSearch(e.target.value)}
       />
-      <Struct.Button asChild className="w-fit">
-        <Link href={pathname + "/register"}>
-          Adicionar Novo
-        </Link>
-      </Struct.Button>
+      {(!hideAdd) && (
+        <Struct.Button asChild className="w-fit">
+          <Link href={pathname + "/register"}>
+            Adicionar Novo
+          </Link>
+        </Struct.Button>
+      )}
     </div>
   );
 }
