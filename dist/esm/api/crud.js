@@ -176,43 +176,43 @@ export class CRUDController {
         this.runtime = "nodejs";
         this.parseFilters = (filters) => {
             const parsedFilters = {};
-            for (const [key, value] of Object.entries(filters)) {
-                if (typeof value === "string" && value.includes(",")) { // , or |
-                    parsedFilters[key] = { $in: value.split(/[,\|]/).map(v => v.trim()) };
-                }
-                else {
-                    parsedFilters[key] = value;
-                }
-            }
-            for (const [key, value] of Object.entries(filters)) {
-                if (!key.includes(".")) {
-                    parsedFilters[key] = value;
+            for (const [key, rawValue] of Object.entries(filters)) {
+                const value = decodeURIComponent(String(rawValue));
+                // Suporte a vírgula ou pipe (`,` ou `|`) → vira $in
+                if (/[,\|]/.test(value)) {
+                    parsedFilters[key] = { $in: value.split(/[,\|]/).map(v => v.trim()).filter(Boolean) };
                     continue;
                 }
-                const parts = key.split(".");
-                let current = parsedFilters;
-                parts.forEach((part, idx) => {
-                    if (idx === parts.length - 1) {
-                        current[part] = value;
-                    }
-                    else {
-                        current[part] = current[part] || {};
-                        current = current[part];
-                    }
-                });
+                // Suporte a campos aninhados tipo user.name=Lucas
+                if (key.includes(".")) {
+                    const parts = key.split(".");
+                    let current = parsedFilters;
+                    parts.forEach((part, idx) => {
+                        if (idx === parts.length - 1) {
+                            current[part] = value;
+                        }
+                        else {
+                            current[part] = current[part] || {};
+                            current = current[part];
+                        }
+                    });
+                    continue;
+                }
+                parsedFilters[key] = value;
             }
             // 2. Converte campos comuns em ObjectId
             if (parsedFilters.id || parsedFilters._id) {
                 parsedFilters._id = new mongoose.Types.ObjectId(parsedFilters.id || parsedFilters._id);
                 delete parsedFilters.id;
             }
+            // 3. Converte business em ObjectId se necessário
             if (this.model.modelName === "Business") {
                 delete parsedFilters.business;
             }
-            else if (typeof parsedFilters.business === "string") {
+            else if (typeof parsedFilters.business === "string" && isObjectIdOrHexString(parsedFilters.business)) {
                 parsedFilters.business = new mongoose.Types.ObjectId(parsedFilters.business);
             }
-            // 3. Converte recursivamente qualquer propriedade "id" que pareça um ObjectId
+            // 4. Conversão recursiva de IDs
             const convertObjectIds = (obj) => {
                 for (const [key, value] of Object.entries(obj)) {
                     if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -224,7 +224,7 @@ export class CRUDController {
                 }
             };
             convertObjectIds(parsedFilters);
-            // 4. Soft delete
+            // 5. Soft delete
             if (this.options.softDelete) {
                 parsedFilters.$or = [
                     { deletedAt: { $exists: false } },
