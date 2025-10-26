@@ -1,4 +1,11 @@
 import { ReactNode } from "react";
+export interface PaginatedResponse<T> {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    data: T[];
+}
 export interface ListViewProps<T> {
     renderItem: (item: T, index: number) => ReactNode;
     keyExtractor?: (item: T, index: number) => string | number;
@@ -21,8 +28,10 @@ export interface ListViewProps<T> {
     hideContent?: boolean;
     LeftSideHeaderComponent?: ReactNode;
     RightSideHeaderComponent?: ReactNode;
+    enablePagination?: boolean;
+    pageSize?: number;
 }
-export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, showNewButton }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;
+export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, showNewButton, enablePagination, pageSize }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;
 export declare function ListViewHeader({ onChange }: {
     onChange: (value: string) => any;
 }): import("react/jsx-runtime").JSX.Element;

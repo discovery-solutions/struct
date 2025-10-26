@@ -8,6 +8,14 @@ import { fetcher } from "../../fetcher";
 import { cn } from "../utils";
 import Link from "next/link";
 
+export interface PaginatedResponse<T> {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  data: T[];
+}
+
 export interface ListViewProps<T> {
   renderItem: (item: T, index: number) => ReactNode
   keyExtractor?: (item: T, index: number) => string | number
@@ -28,6 +36,8 @@ export interface ListViewProps<T> {
   hideContent?: boolean;
   LeftSideHeaderComponent?: ReactNode;
   RightSideHeaderComponent?: ReactNode;
+  enablePagination?: boolean;
+  pageSize?: number;
 }
 
 export function ListView<T>({
@@ -45,30 +55,132 @@ export function ListView<T>({
   ListFooterComponent,
   ItemSeparatorComponent,
   refetchOnMount = true,
-  showNewButton = true
+  showNewButton = true,
+  enablePagination = false,
+  pageSize = 10
 }: ListViewProps<T>) {
   const Struct = useStructUI();
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
   const {
     data: queryData,
     isLoading,
     error,
     refetch,
-  } = useQuery<T[]>({
+  } = useQuery<T[] | PaginatedResponse<T>>({
     enabled: !!endpoint,
-    queryKey: [endpoint, "list", Object.values(queryParams || {})],
-    queryFn: () => fetcher(`/api/${endpoint}`, { params: queryParams }) as any,
+    queryKey: [endpoint, "list", currentPage, pageSize, Object.values(queryParams || {})],
+    queryFn: () => fetcher(`/api/${endpoint}`, {
+      params: {
+        ...queryParams,
+        ...(enablePagination ? { page: currentPage, limit: pageSize } : {})
+      }
+    }) as any,
     refetchOnWindowFocus: refetchOnMount,
   });
 
+  // Detecta se a resposta é paginada ou array puro
+  const isPaginatedResponse = (data: any): data is PaginatedResponse<T> => {
+    return data && typeof data === 'object' && 'data' in data && 'page' in data && 'totalPages' in data;
+  };
+
+  const { items, paginationInfo } = useMemo(() => {
+    let rawData: T[] = [];
+    let pagination: PaginatedResponse<T> | null = null;
+
+    if (data) {
+      rawData = data;
+    } else if (queryData) {
+      if (isPaginatedResponse(queryData)) {
+        rawData = queryData.data;
+        pagination = queryData;
+      } else {
+        rawData = queryData as T[];
+      }
+    }
+
+    return {
+      items: rawData,
+      paginationInfo: pagination
+    };
+  }, [data, queryData]);
+
   const listData = useMemo(() => {
-    const arr = (data ?? queryData ?? []);
+    const arr = items ?? [];
     return (filters?.search?.length || search.length)
-      ? (arr as any[]).filter((item) => JSON.stringify(item).toLowerCase().includes((filters?.search || search).toLowerCase()))
+      ? (arr as any[]).filter((item) =>
+        JSON.stringify(item).toLowerCase().includes((filters?.search || search).toLowerCase())
+      )
       : arr;
-  }, [data, queryData, search, filters]);
+  }, [items, search, filters]);
 
   const isEmpty = !listData || listData.length === 0;
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const renderPagination = () => {
+    if (!enablePagination || !paginationInfo) return null;
+
+    const { page, totalPages, total } = paginationInfo;
+
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex items-center justify-between gap-4 pt-4">
+        <div className="text-sm text-muted-foreground">
+          Página {page} de {totalPages} ({total} {total === 1 ? 'item' : 'itens'})
+        </div>
+        <div className="flex gap-2">
+          <Struct.Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page <= 1}
+          >
+            Anterior
+          </Struct.Button>
+
+          {/* Renderiza números de página */}
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            let pageNum: number;
+
+            if (totalPages <= 5) {
+              pageNum = i + 1;
+            } else if (page <= 3) {
+              pageNum = i + 1;
+            } else if (page >= totalPages - 2) {
+              pageNum = totalPages - 4 + i;
+            } else {
+              pageNum = page - 2 + i;
+            }
+
+            return (
+              <Struct.Button
+                key={pageNum}
+                variant={page === pageNum ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePageChange(pageNum)}
+              >
+                {pageNum}
+              </Struct.Button>
+            );
+          })}
+
+          <Struct.Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= totalPages}
+          >
+            Próxima
+          </Struct.Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={cn("flex flex-1 flex-col p-4 gap-4", className)}>
@@ -93,14 +205,18 @@ export function ListView<T>({
       ) : isEmpty ? (
         ListEmptyComponent || <p className="text-center text-muted-foreground">Nenhum item encontrado.</p>
       ) : (
-        <div className={cn("flex flex-row flex-wrap gap-4", containerClassName)}>
-          {listData.map((item, index) => (
-            <div key={keyExtractor?.(item, index) ?? index}>
-              {renderItem(item, index)}
-              {ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent}
-            </div>
-          ))}
-        </div>
+        <>
+          <div className={cn("flex flex-row flex-wrap gap-4", containerClassName)}>
+            {listData.map((item, index) => (
+              <div key={keyExtractor?.(item, index) ?? index}>
+                {renderItem(item, index)}
+                {ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent}
+              </div>
+            ))}
+          </div>
+
+          {renderPagination()}
+        </>
       )}
 
       {ListFooterComponent}
@@ -132,4 +248,4 @@ export function ListViewHeader({ onChange }: { onChange: (value: string) => any 
       </Struct.Button>
     </div>
   );
-};
+}

@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "type": "module",
     "description": "Framework para criação estruturada de forms e CRUDs com Next.js, React Hook Form, Zod e ShadCN.",
-    "author": "Lucas Paes <lucas@dscvr.solutions>",
+    "author": "Lucas Paes <lucas@dscvr.space>",
     "scripts": {
         "dev": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json --watch",
         "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
