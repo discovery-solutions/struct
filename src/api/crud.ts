@@ -230,6 +230,15 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     const parsedFilters: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(filters)) {
+      if (typeof value === "string" && value.includes(",")) { // , or |
+        parsedFilters[key] = { $in: value.split(/[,\|]/).map(v => v.trim()) };
+      }
+      else {
+        parsedFilters[key] = value;
+      }
+    }
+
+    for (const [key, value] of Object.entries(filters)) {
       if (!key.includes(".")) {
         parsedFilters[key] = value;
         continue;
