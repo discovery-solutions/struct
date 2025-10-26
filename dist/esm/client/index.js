@@ -1,11 +1,11 @@
 "use client";
 export { ModalForm, ModalFormProvider, useModalForm } from "./crud/form/modal";
 export { ConfirmDialog, useConfirmDialog } from "./confirm-dialog";
-export { ListView, ListViewHeader } from "./crud/list-view";
 export { StructUIProvider, useStructUI } from "./provider";
 export { FieldRender } from "./crud/form/renderer";
 export { TableView, } from "./crud/table-view";
 export { ModelForm } from "./crud/form/index";
+export { ListView } from "./crud/list-view";
 export { SearchHeader } from "./crud/search-header";
 export { getLinkTo } from "./crud/data-table";
 export { fetcher } from "../fetcher";

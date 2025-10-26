@@ -1,20 +1,14 @@
 "use strict";
 "use client";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ListView = ListView;
-exports.ListViewHeader = ListViewHeader;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 const search_header_1 = require("./search-header");
-const navigation_1 = require("next/navigation");
 const provider_1 = require("../provider");
 const react_query_1 = require("@tanstack/react-query");
 const fetcher_1 = require("../../fetcher");
 const utils_1 = require("../utils");
-const link_1 = __importDefault(require("next/link"));
 function ListView({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount = true, showNewButton = true, enablePagination = false, pageSize = 10, hideAdd = false, }) {
     const Struct = (0, provider_1.useStructUI)();
     const [search, setSearch] = (0, react_1.useState)("");
@@ -88,14 +82,4 @@ function ListView({ data, endpoint, filters, queryParams, asChild, className, co
                         }), (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "outline", size: "sm", onClick: () => handlePageChange(page + 1), disabled: page >= totalPages, children: "Pr\u00F3xima" })] })] }));
     };
     return ((0, jsx_runtime_1.jsxs)("div", { className: (0, utils_1.cn)("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ? ListHeaderComponent : ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), hideAdd: hideAdd === false ? false : !showNewButton })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex justify-center py-4", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : (error && listData.length < 1) ? ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-col items-center gap-2 py-4", children: [(0, jsx_runtime_1.jsx)("p", { className: "text-center text-destructive", children: "Erro ao carregar dados." }), (0, jsx_runtime_1.jsx)(Struct.Button, { variant: "outline", onClick: () => refetch(), children: "Tentar novamente" })] })) : isEmpty ? (ListEmptyComponent || (0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground", children: "Nenhum item encontrado." })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: (0, utils_1.cn)("flex flex-row flex-wrap gap-4", containerClassName), children: listData.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { children: [renderItem(item, index), ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent] }, keyExtractor?.(item, index) ?? index))) }), renderPagination()] })), ListFooterComponent] }));
-}
-function ListViewHeader({ onChange, hideAdd = false }) {
-    const [search, setSearch] = (0, react_1.useState)("");
-    const pathname = (0, navigation_1.usePathname)();
-    const Struct = (0, provider_1.useStructUI)();
-    (0, react_1.useEffect)(() => {
-        if (onChange)
-            onChange(search);
-    }, [search, onChange]);
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-row justify-between items-center gap-4", children: [(0, jsx_runtime_1.jsx)(Struct.Input, { placeholder: "Pesquisar...", className: "max-w-xs", value: search, onChange: (e) => setSearch(e.target.value) }), (!hideAdd) && ((0, jsx_runtime_1.jsx)(Struct.Button, { asChild: true, className: "w-fit", children: (0, jsx_runtime_1.jsx)(link_1.default, { href: pathname + "/register", children: "Adicionar Novo" }) }))] }));
 }

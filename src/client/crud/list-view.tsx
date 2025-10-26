@@ -1,12 +1,10 @@
 "use client";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { SearchHeader } from "./search-header";
-import { usePathname } from "next/navigation";
 import { useStructUI } from "../provider";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../../fetcher";
 import { cn } from "../utils";
-import Link from "next/link";
 
 export interface PaginatedResponse<T> {
   page: number;
@@ -34,8 +32,6 @@ export interface ListViewProps<T> {
   asChild?: boolean;
   filters?: { search?: string };
   hideContent?: boolean;
-  LeftSideHeaderComponent?: ReactNode;
-  RightSideHeaderComponent?: ReactNode;
   enablePagination?: boolean;
   pageSize?: number;
   hideAdd?: boolean;
@@ -224,32 +220,4 @@ export function ListView<T>({
       {ListFooterComponent}
     </div>
   )
-}
-
-export function ListViewHeader({ onChange, hideAdd = false }: { onChange: (value: string) => any, hideAdd: boolean }) {
-  const [search, setSearch] = useState("");
-  const pathname = usePathname();
-  const Struct = useStructUI();
-
-  useEffect(() => {
-    if (onChange) onChange(search);
-  }, [search, onChange]);
-
-  return (
-    <div className="flex flex-row justify-between items-center gap-4">
-      <Struct.Input
-        placeholder="Pesquisar..."
-        className="max-w-xs"
-        value={search}
-        onChange={(e: any) => setSearch(e.target.value)}
-      />
-      {(!hideAdd) && (
-        <Struct.Button asChild className="w-fit">
-          <Link href={pathname + "/register"}>
-            Adicionar Novo
-          </Link>
-        </Struct.Button>
-      )}
-    </div>
-  );
 }

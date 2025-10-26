@@ -26,14 +26,8 @@ export interface ListViewProps<T> {
         search?: string;
     };
     hideContent?: boolean;
-    LeftSideHeaderComponent?: ReactNode;
-    RightSideHeaderComponent?: ReactNode;
     enablePagination?: boolean;
     pageSize?: number;
     hideAdd?: boolean;
 }
 export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, showNewButton, enablePagination, pageSize, hideAdd, }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;
-export declare function ListViewHeader({ onChange, hideAdd }: {
-    onChange: (value: string) => any;
-    hideAdd: boolean;
-}): import("react/jsx-runtime").JSX.Element;
