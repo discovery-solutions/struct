@@ -226,15 +226,26 @@ export class CRUDController<T, U extends StructUser = StructUser> {
   dynamic = "force-dynamic" as any;
   runtime = "nodejs" as any;
 
-  private parseFilters = (filters: Record<string, any>) => {
+  private parseFilters = (filters: Record<string, any> = {}) => {
+    if (typeof filters !== "object" || filters === null) {
+      filters = {};
+    }
+
     const parsedFilters: Record<string, any> = {};
 
     for (const [key, rawValue] of Object.entries(filters)) {
+      if (rawValue === undefined || rawValue === null) continue;
+
       const value = decodeURIComponent(String(rawValue));
 
       // Suporte a vírgula ou pipe (`,` ou `|`) → vira $in
       if (/[,\|]/.test(value)) {
-        parsedFilters[key] = { $in: value.split(/[,\|]/).map(v => v.trim()).filter(Boolean) };
+        parsedFilters[key] = {
+          $in: value
+            .split(/[,\|]/)
+            .map((v) => v.trim())
+            .filter(Boolean),
+        };
         continue;
       }
 
@@ -242,14 +253,15 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       if (key.includes(".")) {
         const parts = key.split(".");
         let current = parsedFilters;
-        parts.forEach((part, idx) => {
-          if (idx === parts.length - 1) {
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          if (i === parts.length - 1) {
             current[part] = value;
           } else {
             current[part] = current[part] || {};
             current = current[part];
           }
-        });
+        }
         continue;
       }
 
@@ -262,14 +274,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       delete parsedFilters.id;
     }
 
-    // 3. Converte business em ObjectId se necessário
-    if (this.model.modelName === "Business") {
-      delete parsedFilters.business;
-    } else if (typeof parsedFilters.business === "string" && isObjectIdOrHexString(parsedFilters.business)) {
-      parsedFilters.business = new mongoose.Types.ObjectId(parsedFilters.business);
-    }
-
-    // 4. Conversão recursiva de IDs
+    // 3. Conversão recursiva de IDs
     const convertObjectIds = (obj: Record<string, any>) => {
       for (const [key, value] of Object.entries(obj)) {
         if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -281,8 +286,8 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     };
     convertObjectIds(parsedFilters);
 
-    // 5. Soft delete
-    if (this.options.softDelete) {
+    // 4. Soft delete
+    if (this.options?.softDelete) {
       parsedFilters.$or = [
         { deletedAt: { $exists: false } },
         { deletedAt: null },
@@ -290,7 +295,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
     }
 
     return parsedFilters;
-  }
+  };
 
   private populateQuery = (q: any) => {
     if (this.options.populate) {

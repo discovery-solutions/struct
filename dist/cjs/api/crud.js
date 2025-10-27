@@ -210,28 +210,40 @@ class CRUDController {
         }, { roles: this.getRoleForMethod("DELETE") });
         this.dynamic = "force-dynamic";
         this.runtime = "nodejs";
-        this.parseFilters = (filters) => {
+        this.parseFilters = (filters = {}) => {
+            // Garante que sempre temos um objeto
+            if (typeof filters !== "object" || filters === null) {
+                filters = {};
+            }
             const parsedFilters = {};
             for (const [key, rawValue] of Object.entries(filters)) {
+                if (rawValue === undefined || rawValue === null)
+                    continue;
                 const value = decodeURIComponent(String(rawValue));
                 // Suporte a vírgula ou pipe (`,` ou `|`) → vira $in
                 if (/[,\|]/.test(value)) {
-                    parsedFilters[key] = { $in: value.split(/[,\|]/).map(v => v.trim()).filter(Boolean) };
+                    parsedFilters[key] = {
+                        $in: value
+                            .split(/[,\|]/)
+                            .map((v) => v.trim())
+                            .filter(Boolean),
+                    };
                     continue;
                 }
                 // Suporte a campos aninhados tipo user.name=Lucas
                 if (key.includes(".")) {
                     const parts = key.split(".");
                     let current = parsedFilters;
-                    parts.forEach((part, idx) => {
-                        if (idx === parts.length - 1) {
+                    for (let i = 0; i < parts.length; i++) {
+                        const part = parts[i];
+                        if (i === parts.length - 1) {
                             current[part] = value;
                         }
                         else {
                             current[part] = current[part] || {};
                             current = current[part];
                         }
-                    });
+                    }
                     continue;
                 }
                 parsedFilters[key] = value;
@@ -241,14 +253,7 @@ class CRUDController {
                 parsedFilters._id = new mongoose_1.default.Types.ObjectId(parsedFilters.id || parsedFilters._id);
                 delete parsedFilters.id;
             }
-            // 3. Converte business em ObjectId se necessário
-            if (this.model.modelName === "Business") {
-                delete parsedFilters.business;
-            }
-            else if (typeof parsedFilters.business === "string" && (0, mongoose_1.isObjectIdOrHexString)(parsedFilters.business)) {
-                parsedFilters.business = new mongoose_1.default.Types.ObjectId(parsedFilters.business);
-            }
-            // 4. Conversão recursiva de IDs
+            // 3. Conversão recursiva de IDs
             const convertObjectIds = (obj) => {
                 for (const [key, value] of Object.entries(obj)) {
                     if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -260,8 +265,8 @@ class CRUDController {
                 }
             };
             convertObjectIds(parsedFilters);
-            // 5. Soft delete
-            if (this.options.softDelete) {
+            // 4. Soft delete
+            if (this.options?.softDelete) {
                 parsedFilters.$or = [
                     { deletedAt: { $exists: false } },
                     { deletedAt: null },
