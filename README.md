@@ -164,8 +164,8 @@ export const User = mongoose?.models?.User || mongoose.model<UserInterface>("Use
 **2. Create a Next.js API Route:**
 
 ```typescript
-// app/api/users/[[...id]]/route.ts
-import { User, UserInterface } from "@/models/user";
+// app/api/identity/users/[[...id]]/route.ts
+import { User, UserInterface } from "@/models/identity/user";
 import { CRUDController } from "@/struct";
 
 export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
@@ -239,7 +239,7 @@ updateSchema: z.object({
 #### Filtering & Pagination
 
 ```
-GET /api/users?page=2&limit=10&name=Lucas
+GET /api/identity/users?page=2&limit=10&name=Lucas
 ```
 
 - `page` → defaults to 1
@@ -266,7 +266,7 @@ If no page/limit provided, returns just an array of results.
 #### Example With Hooks
 
 ```typescript
-import { User, UserInterface } from "@/models/user";
+import { User, UserInterface } from "@/models/identity/user";
 import { CRUDController } from "@/struct";
 import { z } from "zod";
 
@@ -307,7 +307,7 @@ Mongoose is powerful but often verbose and repetitive when writing controllers. 
 #### Usage
 
 ```typescript
-import { User, UserInterface } from "@/models/user";
+import { User, UserInterface } from "@/models/identity/user";
 import { ModelService } from "@/struct";
 
 const userService = new ModelService<UserInterface>(User);
