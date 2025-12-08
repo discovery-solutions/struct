@@ -88,6 +88,7 @@ export const getLinkTo = (acessor: string) => {
 
 export const LinkTo = ({ row, acessor }: { row: any, acessor: string }) => {
   const pathname = usePathname();
+
   return (
     <Link href={[pathname, row.original._id].join("/")} className="text-blue-600 hover:underline">
       {row.getValue(acessor)}

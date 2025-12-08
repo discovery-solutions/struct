@@ -591,7 +591,7 @@ The `ConfirmDialog` is a flexible, reusable confirmation modal that integrates s
 | `open` | `boolean` | Optional controlled open state |
 | `onOpenChange` | `(open: boolean) => void` | Optional callback when modal state changes |
 | `title` | `string` | Dialog title |
-| `description` | `string` | Dialog description |
+| `description` | `string` | Dialog description (string or ReactNode) |
 | `endpoint` | `string` | Optional API endpoint for the action |
 | `params` | `{ id: string }` | Optional parameters for the API call |
 | `method` | `"DELETE" \| "PATCH" \| "POST"` | HTTP method. Defaults to "DELETE" |

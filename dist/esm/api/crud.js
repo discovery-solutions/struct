@@ -175,7 +175,6 @@ export class CRUDController {
         this.dynamic = "force-dynamic";
         this.runtime = "nodejs";
         this.parseFilters = (filters = {}) => {
-            // Garante que sempre temos um objeto
             if (typeof filters !== "object" || filters === null) {
                 filters = {};
             }

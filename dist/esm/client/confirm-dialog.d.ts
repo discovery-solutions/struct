@@ -3,7 +3,7 @@ export type ConfirmDialogProps = {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     title?: string;
-    description?: string;
+    description?: string | ReactNode;
     endpoint?: string;
     params?: {
         id: string;
