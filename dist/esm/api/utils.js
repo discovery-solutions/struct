@@ -37,9 +37,9 @@ export const withSession = (handler, params = {}) => {
         }
         catch (err) {
             const error = err?.flatten
-                ? Object.values(err.flatten().fieldErrors)
+                ? Object.keys(err.flatten().fieldErrors)
                     .flat()
-                    .map((msg) => `${msg || "Campo inválido"}`)
+                    .map((key) => `[${key}]: ${err.flatten().fieldErrors[key] || "Campo inválido"}`)
                 : err.message || "Internal Server Error";
             console.log(error);
             return Response.json({ error }, { status: 500 });

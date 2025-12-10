@@ -53,9 +53,9 @@ export const withSession = <U extends StructUser>(
       return await handler({ user }, req, context);
     } catch (err: ZodError | any) {
       const error = err?.flatten
-        ? Object.values(err.flatten().fieldErrors)
+        ? Object.keys(err.flatten().fieldErrors)
           .flat()
-          .map((msg) => `${msg || "Campo inválido"}`)
+          .map((key) => `[${key}]: ${err.flatten().fieldErrors[key] || "Campo inválido"}`)
         : err.message || "Internal Server Error";
 
       console.log(error);
