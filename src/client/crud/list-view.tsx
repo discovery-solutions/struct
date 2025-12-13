@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useMemo, useState } from "react";
+import { Fragment, ReactNode, useMemo, useState } from "react";
 import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
 import { useQuery } from "@tanstack/react-query";
@@ -17,9 +17,10 @@ export interface PaginatedResponse<T> {
 export interface ListViewProps<T> {
   renderItem: (item: T, index: number) => ReactNode
   keyExtractor?: (item: T, index: number) => string | number
-  ListHeaderComponent?: ReactNode
+  ListItemWrapper?: React.ComponentType<{ children: ReactNode, [key: string]: any }>
   ListEmptyComponent?: ReactNode
   ListFooterComponent?: ReactNode
+  ListHeaderComponent?: ReactNode
   ItemSeparatorComponent?: ReactNode
   refetchOnMount?: boolean;
   endpoint?: string;
@@ -47,6 +48,7 @@ export function ListView<T>({
   containerClassName,
   renderItem,
   keyExtractor,
+  ListItemWrapper = Fragment,
   ListEmptyComponent,
   ListHeaderComponent,
   ListFooterComponent,
@@ -206,10 +208,10 @@ export function ListView<T>({
         <>
           <div className={cn("flex flex-row flex-wrap gap-4", containerClassName)}>
             {listData.map((item, index) => (
-              <div key={keyExtractor?.(item, index) ?? index}>
+              <ListItemWrapper key={keyExtractor?.(item, index) ?? index}>
                 {renderItem(item, index)}
                 {ItemSeparatorComponent && index < listData.length - 1 && ItemSeparatorComponent}
-              </div>
+              </ListItemWrapper>
             ))}
           </div>
 
