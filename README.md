@@ -52,7 +52,7 @@ Create a `struct.ts` file at the root of your project (`/src` or `/`):
 
 ```typescript
 // struct.ts
-import { connectDB } from "@/lib/mongo";
+import { connectDB, closeDB } from "@/lib/mongo";
 import { Struct } from "@discovery-solutions/struct";
 
 // Re-export everything from the package
@@ -61,10 +61,11 @@ export * from "@discovery-solutions/struct";
 Struct.configure({
   database: {
     startConnection: connectDB,
+    closeConnection: closeDB, // Optional: cleanup function
   },
   // Optional auth integration
   // auth: {
-  //   getSession: async () => null,
+  //   getSession: async (req, context) => null,
   //   getUser: async () => null,
   // },
 });
@@ -106,7 +107,17 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 ```
 
-### 3. Extend StructUser (Optional)
+### 3. Global CSS Setup
+
+Add this line to your **`app/globals.css`** (or equivalent global CSS file):
+
+```css
+@source "../../node_modules/@discovery-solutions/struct";
+```
+
+This ensures Tailwind classes from Struct UI components are registered.
+
+### 4. Extend StructUser (Optional)
 
 You can extend the default `StructUser` type to include custom roles or permissions:
 
@@ -124,38 +135,318 @@ declare module "@discovery-solutions/struct" {
 
 ---
 
+## 📁 Project Structure & Model Organization
+
+### Recommended Model Structure
+
+Organize your models following this pattern for better maintainability:
+
+```
+@/models/
+└── identity/
+    └── user/
+        ├── index.ts          # Types and Zod schemas
+        ├── model.ts          # Mongoose model definition
+        ├── schema.ts         # UI schemas (columns, fields)
+        └── constants.ts      # Enums, options, static data
+```
+
+#### 1. Types & Validation (`index.ts`)
+
+Define your TypeScript interfaces and Zod schemas:
+
+```typescript
+// @/models/identity/user/index.ts
+import { z } from "zod";
+
+export type UserRole = "admin" | "manager" | "broker" | "sdr";
+
+export interface UserInterface {
+  _id?: string;
+  name: string;
+  email: string;
+  password?: string;
+  role: UserRole | "*";
+  enterprise?: string;
+  avatar?: string;
+  phone?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+}
+
+export const userCreateSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres").optional(),
+  role: z.enum(["admin", "manager", "broker", "sdr"]).default("broker"),
+  enterprise: z.string().optional(),
+  avatar: z.string().url().optional(),
+  phone: z.string().optional(),
+});
+
+export const userUpdateSchema = userCreateSchema.partial();
+```
+
+#### 2. Mongoose Model (`model.ts`)
+
+Define your Mongoose schema and model:
+
+```typescript
+// @/models/identity/user/model.ts
+import { compass, Schema } from "@/lib/mongoose";
+import { UserInterface } from "@/models/identity/user";
+import { Enterprise } from "@/models/identity/enterprise/model";
+
+export * from "@/models/identity/user";
+
+const UserSchema = new Schema<UserInterface>(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true, index: true },
+    password: { type: String },
+    role: {
+      type: String,
+      enum: ["admin", "manager", "broker", "sdr"],
+      default: "broker",
+      required: true,
+    },
+    enterprise: {
+      type: Schema.Types.ObjectId,
+      ref: Enterprise,
+      nullable: true,
+      index: true,
+    },
+    avatar: { type: String },
+    phone: { type: String },
+    deletedAt: { type: Date },
+  },
+  { timestamps: true }
+);
+
+export const User =
+  compass.models?.User ||
+  compass.model<UserInterface>("User", UserSchema);
+```
+
+#### 3. UI Schemas (`schema.ts`)
+
+Define columns for tables and fields for forms:
+
+```typescript
+// @/models/identity/user/schema.ts
+import { UserInterface } from "@/models/identity/user";
+import { FieldInterface } from "@discovery-solutions/struct/client";
+import { ColumnDef } from "@tanstack/react-table";
+
+export * from "@/models/identity/user";
+
+export const userColumns: ColumnDef<UserInterface>[] = [
+  {
+    header: "Nome",
+    accessorKey: "name",
+  },
+  {
+    header: "Email",
+    accessorKey: "email",
+  },
+  {
+    header: "Cargo",
+    accessorKey: "role",
+  },
+  {
+    header: "Telefone",
+    accessorKey: "phone",
+  },
+];
+
+export const userFields: FieldInterface[] = [
+  {
+    name: "name",
+    type: "text",
+    label: "Nome Completo",
+    placeholder: "João Silva",
+    required: true,
+  },
+  {
+    name: "email",
+    type: "email",
+    label: "Email",
+    placeholder: "joao@imobiliaria.com",
+    required: true,
+  },
+  {
+    name: "password",
+    type: "password",
+    label: "Senha",
+    placeholder: "••••••",
+    description: "Deixe em branco para manter a senha atual",
+  },
+  {
+    name: "role",
+    type: "select",
+    label: "Cargo",
+    required: true,
+    options: [
+      { label: "Administrador", value: "admin" },
+      { label: "Gestor", value: "manager" },
+      { label: "Corretor", value: "broker" },
+      { label: "SDR (Pré-vendas)", value: "sdr" },
+    ],
+  },
+  {
+    name: "enterprise",
+    type: "model-select",
+    label: "Empresa",
+    model: "identity/enterprise",
+    required: true,
+  },
+  {
+    name: "phone",
+    type: "text",
+    label: "Telefone",
+    placeholder: "(11) 99999-9999",
+  },
+  {
+    name: "avatar",
+    type: "avatar",
+    label: "Foto de Perfil",
+  },
+];
+```
+
+#### 4. Constants (`constants.ts`)
+
+Define enums, options, and static data:
+
+```typescript
+// @/models/identity/user/constants.ts
+export const ROLES = {
+  admin: "Administrador",
+  manager: "Gestor",
+  broker: "Corretor",
+  sdr: "SDR (Pré-vendas)",
+  "*": "Indefinido"
+}
+
+export const COUNTRIES = [
+  { value: "BR", label: "Brasil" },
+  { value: "US", label: "Estados Unidos" },
+  { value: "ES", label: "Espanha" },
+  // ... more countries
+].sort((a, b) => a.label.localeCompare(b.label));
+
+export const LANGUAGES = [
+  { value: "pt-BR", label: "Português (Brasil)" },
+  { value: "en-US", label: "Inglês (EUA)" },
+  { value: "es-ES", label: "Espanhol (Espanha)" },
+  { value: "fr-FR", label: "Francês (França)" },
+];
+```
+
+---
+
+### Using the Model Structure
+
+#### In API Routes
+
+```typescript
+// app/api/identity/users/[[...id]]/route.ts
+import { User, UserInterface, userCreateSchema, userUpdateSchema } from "@/models/identity/user/model";
+import { CRUDController } from "@/struct";
+
+export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
+  softDelete: true,
+  createSchema: userCreateSchema,
+  updateSchema: userUpdateSchema,
+  populate: ["enterprise"],
+  roles: {
+    GET: "admin",
+    POST: "admin",
+    PATCH: "admin",
+    DELETE: "admin"
+  }
+});
+```
+
+#### In Client Components
+
+```typescript
+// app/(dashboard)/identity/users/page.tsx
+import { TableView } from "@discovery-solutions/struct/client";
+import { userColumns } from "@/models/identity/user/schema";
+
+export default function UsersPage() {
+  return (
+    <TableView
+      endpoint="identity/users"
+      columns={userColumns}
+      asChild={true}
+    />
+  );
+}
+```
+
+#### In Forms
+
+```typescript
+// app/(dashboard)/identity/users/register/page.tsx
+import { ModelForm } from "@discovery-solutions/struct/client";
+import { userFields, userCreateSchema } from "@/models/identity/user/schema";
+
+export default function UserRegisterPage() {
+  return (
+    <ModelForm
+      endpoint="identity/users"
+      schema={userCreateSchema}
+      fields={userFields}
+      mode="register"
+    />
+  );
+}
+```
+
 ## 📖 Core Concepts
 
 ### CRUDController
-
-The `CRUDController` is a generic, ready-to-use CRUD layer for Mongoose models designed for Next.js app routes. It handles all the heavy lifting for common operations (GET, POST, PATCH, DELETE) while allowing you to hook into the lifecycle with custom logic.
-
-#### Features
-
-- Generic CRUD operations (findOne, list, create, update, delete)
-- Built-in role-based access per HTTP method
-- Extensible via hooks (beforeCreate, afterUpdate, beforeSend, etc.)
-- Optional soft delete strategy
-- Request body validation via Zod schemas
-- Works seamlessly with Next.js Route Handlers
-- Pagination, filtering, and deep nested filters included
 
 #### Basic Usage
 
 **1. Define your Mongoose model:**
 
 ```typescript
-import mongoose from "mongoose";
+// @/models/identity/user/index.ts
+import { z } from "zod";
 
-interface UserInterface {
+export interface UserInterface {
   _id?: string;
   name: string;
   email: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
+export const userCreateSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+});
+
+export const userUpdateSchema = userCreateSchema.partial();
+```
+
+```typescript
+// @/models/identity/user/model.ts
+import { Schema } from "mongoose";
+import { UserInterface } from "@/models/identity/user";
+import mongoose from "mongoose";
+
+export * from "@/models/identity/user";
+
+const UserSchema = new Schema<UserInterface>({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  deletedAt: { type: Date },
 }, { timestamps: true });
 
 export const User = mongoose?.models?.User || mongoose.model<UserInterface>("User", UserSchema);
@@ -165,11 +456,13 @@ export const User = mongoose?.models?.User || mongoose.model<UserInterface>("Use
 
 ```typescript
 // app/api/identity/users/[[...id]]/route.ts
-import { User, UserInterface } from "@/models/identity/user";
+import { User, UserInterface, userCreateSchema, userUpdateSchema } from "@/models/identity/user/model";
 import { CRUDController } from "@/struct";
 
 export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
   softDelete: true,
+  createSchema: userCreateSchema,
+  updateSchema: userUpdateSchema,
   roles: {
     GET: "admin",
     POST: "admin",
@@ -179,103 +472,19 @@ export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(Us
 });
 ```
 
-That's it! 🚀 Your CRUD endpoints are ready.
-
-#### Options
-
-The second argument in the constructor (`CRUDOptions<T, U>`) lets you customize behavior:
-
-**Roles:**
-
-```typescript
-roles?: {
-  GET?: UserRole;
-  POST?: UserRole;
-  PATCH?: UserRole;
-  DELETE?: UserRole;
-}
-```
-
-**Hooks:**
-
-All hooks are async and can modify or intercept data:
-
-```typescript
-hooks?: {
-  beforeGet?: (ctx) => Promise<void>;
-  afterGet?: (ctx) => Promise<T | null>;
-  beforeCreate?: (ctx) => Promise<Partial<T>>;
-  afterCreate?: (ctx) => Promise<void>;
-  beforeUpdate?: (ctx) => Promise<Partial<T> | true>;
-  afterUpdate?: (ctx) => Promise<void>;
-  beforeDelete?: (ctx) => Promise<void>;
-  afterDelete?: (ctx) => Promise<void>;
-  beforeSend?: (result, ctx) => Promise<any>;
-}
-```
-
-**Validation:**
-
-```typescript
-import { z } from "zod";
-
-createSchema: z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-}),
-
-updateSchema: z.object({
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-}),
-```
-
-**Other Options:**
-
-- `populate?: string[]` → define relationships to auto-populate on GET
-- `softDelete?: boolean` → if true, documents are never removed, only marked with deletedAt
-- `customParser?: (req: NextRequest) => Promise<any>` → override request body parsing
-
-#### Filtering & Pagination
-
-```
-GET /api/identity/users?page=2&limit=10&name=Lucas
-```
-
-- `page` → defaults to 1
-- `limit` → defaults to 0 (no pagination)
-- Any query param is treated as a filter
-- Nested filters with dot notation supported: `address.city=NY`
-- ObjectId fields (id, _id) are automatically converted
-- With `softDelete: true`, automatically excludes deleted docs
-
-**Response format (when paginated):**
-
-```json
-{
-  "page": 2,
-  "limit": 10,
-  "total": 45,
-  "totalPages": 5,
-  "data": [...]
-}
-```
-
-If no page/limit provided, returns just an array of results.
+---
 
 #### Example With Hooks
 
 ```typescript
-import { User, UserInterface } from "@/models/identity/user";
+// app/api/identity/users/[[...id]]/route.ts
+import { User, UserInterface, userCreateSchema, userUpdateSchema } from "@/models/identity/user/model";
 import { CRUDController } from "@/struct";
-import { z } from "zod";
 
 export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
   softDelete: true,
-  createSchema: z.object({
-    name: z.string(),
-    email: z.string().email(),
-  }),
+  createSchema: userCreateSchema,
+  updateSchema: userUpdateSchema,
   hooks: {
     beforeCreate: async ({ user, data }) => {
       if (user.role !== "admin") throw new Error("Unauthorized");
@@ -293,21 +502,10 @@ export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(Us
 
 ### ModelService
 
-The `ModelService` is a lightweight abstraction over Mongoose models, providing generic CRUD operations with typed support. It is designed to work standalone or as the backend layer for `CRUDController`.
-
-#### Purpose
-
-Mongoose is powerful but often verbose and repetitive when writing controllers. ModelService helps by:
-
-- Wrapping common queries in reusable, typed methods
-- Normalizing results with `parseEntityToObject`
-- Providing consistency across models
-- Acting as the foundation for CRUDController
-
 #### Usage
 
 ```typescript
-import { User, UserInterface } from "@/models/identity/user";
+import { User, UserInterface } from "@/models/identity/user/model";
 import { ModelService } from "@/struct";
 
 const userService = new ModelService<UserInterface>(User);
@@ -316,69 +514,39 @@ const userService = new ModelService<UserInterface>(User);
 const user = await userService.findOne({ email: "john@example.com" });
 ```
 
-#### API Reference
-
-| Method | Description |
-|--------|-------------|
-| `findOne(query, ...args)` | Finds a single document by a MongoDB query |
-| `findById(id, populate?)` | Finds a document by ID. Supports populate |
-| `findMany(query?)` | Finds multiple documents by query |
-| `create(data)` | Creates and saves a new document |
-| `updateOne(query, updates)` | Updates the first document matching a query |
-| `updateById(id, updates)` | Updates a document by its _id |
-| `deleteOne(query)` | Deletes a single document matching the query |
-
 ---
 
 ## 🎨 Client Components
 
 ### TableView
 
-The `TableView` component is a flexible, client-side data table for listing items fetched from a backend API.
-
-#### Features
-
-- Searchable: Typing in the SearchHeader filters rows client-side
-- Dynamic Actions: Edit and delete actions are fully customizable
-- Loading States: Shows a loader while data is loading
-- Empty State: Displays a default message if no items are found
-- Reactivity: Any changes automatically update the table
-- UI-Agnostic: Uses components from your StructUIProvider
-- Flexible Layout: Works in standard list pages or as a child component
-
-#### Props
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `columns` | `any[]` | Columns definition for the table |
-| `endpoint` | `string` | API path for fetching table data |
-| `hideAdd` | `boolean` | If true, hides the "Add new" button |
-| `asChild` | `boolean` | If true, edit actions open modals instead of redirecting |
-| `queryParams` | `Record<string, any>` | Optional query parameters |
-| `LeftItems` | `ReactNode` | Custom content in the left side of the header |
-| `ListHeaderComponent` | `ReactNode` | Optional component replacing the default header |
-| `ListEmptyComponent` | `ReactNode` | Component to render when the table is empty |
-| `ListFooterComponent` | `ReactNode` | Optional footer component |
-
 #### Usage Example
 
 ```typescript
+// app/(dashboard)/identity/users/page.tsx
 import { TableView } from "@discovery-solutions/struct/client";
-import { columns } from "./columns";
+import { userColumns } from "@/models/identity/user/schema";
 
-<TableView
-  endpoint="users"
-  columns={columns}
-  asChild={true}
-  LeftItems={<button className="btn">Custom Action</button>}
-  ListFooterComponent={<div>Total users: 120</div>}
-/>
+export default function UsersPage() {
+  return (
+    <TableView
+      endpoint="identity/users"
+      columns={userColumns}
+      asChild={true}
+      LeftItems={(data) => <span>Total: {data.length}</span>}
+    />
+  );
+}
 ```
 
 **Columns definition:**
 
 ```typescript
-export const columns = [
+// @/models/identity/user/schema.ts
+import { UserInterface } from "@/models/identity/user";
+import { ColumnDef } from "@tanstack/react-table";
+
+export const userColumns: ColumnDef<UserInterface>[] = [
   { header: "Nome", accessorKey: "name" },
   { header: "Email", accessorKey: "email" },
   {
@@ -392,179 +560,136 @@ export const columns = [
 
 ### ListView
 
-The `ListView` component is a flexible, generic list/grid renderer that works with either local data or data fetched from a backend API.
-
-#### Features
-
-- Flexible Layouts: Render rows, grids, or cards
-- Client-Side Filtering: Search items by any property
-- Integrated Loading/Error States
-- Empty State: Default message or fully customizable component
-- Header/Footer: Easily replace default header
-- Custom Separators: Render between items
-- Composable: Can be used standalone or nested
-
-#### Props
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `data` | `T[]` | Optional static array of items |
-| `endpoint` | `string` | Optional API path for fetching data |
-| `queryParams` | `any` | Optional query parameters |
-| `filters` | `{ search?: string }` | Optional filter object |
-| `renderItem` | `(item: T, index: number) => ReactNode` | Required. Renders each item |
-| `keyExtractor` | `(item: T, index: number) => string \| number` | Optional. Generates unique keys |
-| `ListHeaderComponent` | `ReactNode` | Optional component replacing default header |
-| `ListEmptyComponent` | `ReactNode` | Rendered when there are no items |
-| `ListFooterComponent` | `ReactNode` | Rendered below the list |
-| `ItemSeparatorComponent` | `ReactNode` | Rendered between items |
-
 #### Usage Example
 
 ```typescript
+// app/(dashboard)/products/page.tsx
 import { ListView } from "@discovery-solutions/struct/client";
 
 interface Product {
-  id: string;
+  _id: string;
   name: string;
   price: number;
 }
 
-<ListView<Product>
-  endpoint="products"
-  renderItem={(product) => (
-    <div className="card">
-      <h3>{product.name}</h3>
-      <p>{product.price}</p>
-    </div>
-  )}
-  keyExtractor={(p) => p.id}
-  ListFooterComponent={<div>Total products: 12</div>}
-/>
+export default function ProductsPage() {
+  return (
+    <ListView<Product>
+      endpoint="products"
+      enablePagination={true}
+      pageSize={20}
+      renderItem={(product) => (
+        <div className="card">
+          <h3>{product.name}</h3>
+          <p>{product.price}</p>
+        </div>
+      )}
+      keyExtractor={(p) => p._id}
+    />
+  );
+}
 ```
 
 ---
 
 ### ModelForm
 
-The `ModelForm` is a generic, dynamic form component that integrates directly with a backend API.
-
-#### Features
-
-- Automatic CRUD integration: decides POST or PATCH based on mode or id
-- Dynamic rendering: uses FieldInterface + alias mapping for flexible UI
-- Validation: parses fields via Zod before submission
-- Server-side data fetching: auto-fetches initial values in edit mode
-- React Query integration: handles caching, invalidation, loading and errors
-- Conditional fields: supports field.conditional to hide/show fields dynamically
-- Nested values: supports deep objects (user.address.city) automatically
-
-#### Props
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `endpoint` | `string` | API path, e.g., "users" |
-| `schema` | `ZodSchema` | Zod validation schema |
-| `fields` | `FieldInterface[]` | Defines the fields rendered in the form |
-| `mode` | `"register" \| "edit"` | Defaults to "edit" if id exists |
-| `defaultValues` | `Record<string, any>` | Initial form values |
-| `onBeforeSubmit` | `(values) => Promise<any>` | Optional hook to preprocess values |
-| `onSubmit` | `(values) => any` | Optional custom submission handler |
-| `onAfterSubmit` | `(response) => any` | Hook triggered after successful submission |
-| `parseFetchedData` | `(values) => Promise<any>` | Optional parser for fetched API data |
-| `buttonLabel` | `string \| boolean` | Label for submit button; false hides it |
-| `cols` | `number` | Grid columns for layout, default 3 |
-
 #### Usage Example
 
 ```typescript
+// app/(dashboard)/identity/users/register/page.tsx
 import { ModelForm } from "@discovery-solutions/struct/client";
-import { z } from "zod";
+import { userFields, userCreateSchema } from "@/models/identity/user/schema";
 
-const schema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  avatar: z.string().optional(),
-});
+export default function UserRegisterPage() {
+  return (
+    <ModelForm
+      endpoint="identity/users"
+      schema={userCreateSchema}
+      fields={userFields}
+      mode="register"
+      onAfterSubmit={(res) => console.log("Created user:", res)}
+    />
+  );
+}
+```
 
-const fields = [
+**Fields definition:**
+
+```typescript
+// @/models/identity/user/schema.ts
+import { FieldInterface } from "@discovery-solutions/struct/client";
+
+export const userFields: FieldInterface[] = [
   { name: "name", type: "text", label: "Nome", required: true },
-  { name: "email", type: "text", label: "Email", required: true },
+  { name: "email", type: "email", label: "Email", required: true },
   { name: "avatar", type: "avatar", label: "Foto do perfil" },
 ];
-
-<ModelForm
-  endpoint="users"
-  schema={schema}
-  fields={fields}
-  mode="register"
-  onAfterSubmit={(res) => console.log("Created user:", res)}
-/>
 ```
 
 ---
 
 ### ModalForm
 
-The `ModalForm` is a dynamic form modal integrated with StructUIProvider and React Query.
-
-#### Features
-
-- Automatic mode detection (create vs edit)
-- Zod validation applied client-side before mutation
-- API integration with automatic create/update calls
-- React Query support — queries invalidated after mutation
-- Composable forms — define fields once, reuse anywhere
-- Programmatic control via hook (useModalForm)
-
 #### Usage
-
-**Wrap your app with the provider:**
-
-```typescript
-<ModalFormProvider>
-  <TableView ... />
-  <ModalForm ... />
-</ModalFormProvider>
-```
 
 **Basic Create Modal:**
 
 ```typescript
-<ModalFormProvider>
-  <ModalForm
-    title="Add Question"
-    endpoint="profiling/question"
-    schema={questionFormSchema}
-    fields={questionFields}
-    mutationParams={{ scope: { type: "sector", id } }}
-    buttonLabel="Save Question"
-    cols={2}
-    onSuccess={() => console.log("Created successfully!")}
-  />
-</ModalFormProvider>
+// app/(dashboard)/profiling/questions/page.tsx
+import { ModalFormProvider, ModalForm } from "@discovery-solutions/struct/client";
+import { questionFields, questionCreateSchema } from "@/models/profiling/question/schema";
+
+export default function QuestionsPage() {
+  return (
+    <ModalFormProvider>
+      <ModalForm
+        modalId="question-form"
+        title="Add Question"
+        endpoint="profiling/question"
+        schema={questionCreateSchema}
+        fields={questionFields}
+        buttonLabel="Save Question"
+        cols={2}
+      />
+    </ModalFormProvider>
+  );
+}
 ```
 
 **Edit Mode via Hook:**
 
 ```typescript
-function Example() {
+// app/(dashboard)/profiling/questions/page.tsx
+import { ModalFormProvider, ModalForm, useModalForm } from "@discovery-solutions/struct/client";
+import { questionFields, questionCreateSchema } from "@/models/profiling/question/schema";
+
+function QuestionsList() {
   const { openModal } = useModalForm();
 
   return (
     <>
-      <button onClick={() => openModal({ id: "123" })}>
+      <button onClick={() => openModal({ id: "123", modalId: "question-form" })}>
         Edit Question
       </button>
 
       <ModalForm
+        modalId="question-form"
         title="Edit Question"
         endpoint="profiling/question"
-        schema={questionFormSchema}
+        schema={questionCreateSchema}
         fields={questionFields}
         buttonLabel="Update"
       />
     </>
+  );
+}
+
+export default function QuestionsPage() {
+  return (
+    <ModalFormProvider>
+      <QuestionsList />
+    </ModalFormProvider>
   );
 }
 ```
@@ -573,75 +698,49 @@ function Example() {
 
 ### ConfirmDialog
 
-The `ConfirmDialog` is a flexible, reusable confirmation modal that integrates seamlessly with StructUIProvider and React Query.
-
-#### Features
-
-- API integration: automatically executes the defined HTTP method
-- Toast notifications: shows success/error messages automatically
-- React Query integration: invalidates all queries on success
-- Custom triggers: supports inline triggers as child or external control via hook
-- Loader support: displays loader while mutation is pending
-- Flexible usage: can be controlled or uncontrolled
-
-#### Props
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `open` | `boolean` | Optional controlled open state |
-| `onOpenChange` | `(open: boolean) => void` | Optional callback when modal state changes |
-| `title` | `string` | Dialog title |
-| `description` | `string` | Dialog description (string or ReactNode) |
-| `endpoint` | `string` | Optional API endpoint for the action |
-| `params` | `{ id: string }` | Optional parameters for the API call |
-| `method` | `"DELETE" \| "PATCH" \| "POST"` | HTTP method. Defaults to "DELETE" |
-| `onSuccess` | `() => void` | Callback executed after success |
-| `onPress` | `() => void` | Optional custom action handler |
-| `onError` | `(error: any) => void` | Callback executed if the API call fails |
-| `variant` | `string` | Button variant. Defaults to "destructive" |
-| `children` | `ReactNode` | Optional trigger element |
-
 #### Usage Examples
 
 **Inline Trigger:**
 
 ```typescript
-<ConfirmDialog
-  endpoint="users"
-  params={{ id: "123" }}
->
-  <button className="btn-destructive">Delete User</button>
-</ConfirmDialog>
+// app/(dashboard)/identity/users/page.tsx
+import { ConfirmDialog } from "@discovery-solutions/struct/client";
+
+export default function UsersPage() {
+  return (
+    <ConfirmDialog
+      endpoint="identity/users"
+      params={{ id: "123" }}
+    >
+      <button className="btn-destructive">Delete User</button>
+    </ConfirmDialog>
+  );
+}
 ```
 
 **Hook-Controlled:**
 
 ```typescript
-const { open, setOpen, trigger } = useConfirmDialog();
+// app/(dashboard)/identity/users/page.tsx
+import { ConfirmDialog, useConfirmDialog } from "@discovery-solutions/struct/client";
 
-<ConfirmDialog
-  open={open}
-  onOpenChange={setOpen}
-  endpoint="users"
-  params={{ id: "123" }}
-/>
+export default function UsersPage() {
+  const { open, setOpen, trigger } = useConfirmDialog();
 
-<button onClick={trigger}>Delete User</button>
+  return (
+    <>
+      <ConfirmDialog
+        open={open}
+        onOpenChange={setOpen}
+        endpoint="identity/users"
+        params={{ id: "123" }}
+      />
+
+      <button onClick={trigger}>Delete User</button>
+    </>
+  );
+}
 ```
-
-**Custom onPress:**
-
-```typescript
-<ConfirmDialog
-  open={open}
-  onOpenChange={setOpen}
-  onPress={() => console.log("Custom action executed!")}
->
-  <button className="btn">Do Something</button>
-</ConfirmDialog>
-```
-
----
 
 ## 🔧 Utilities
 
@@ -655,8 +754,12 @@ import { withSession } from "@/struct";
 export const GET = withSession(async ({ user }, req, context) => {
   // Your logic here
   return Response.json({ user });
-}, { roles: "admin" });
+}, { roles: "admin", database: "mydb" });
 ```
+
+**Options:**
+- `roles?: string | string[]` → required role(s) to access the endpoint
+- `database?: string` → optional database name for multi-tenant setups
 
 ### parseEntityToObject
 
@@ -666,6 +769,20 @@ Converts Mongoose documents to plain JavaScript objects:
 import { parseEntityToObject } from "@/struct";
 
 const plainUser = parseEntityToObject(mongooseUser);
+```
+
+### fetcher
+
+A utility function for making HTTP requests with automatic error handling:
+
+```typescript
+import { fetcher } from "@discovery-solutions/struct/client";
+
+const data = await fetcher("/api/users", {
+  method: "POST",
+  body: { name: "John" },
+  params: { filter: "active" }
+});
 ```
 
 ---
@@ -689,10 +806,16 @@ export type StructUser = {
 export interface FieldInterface {
   name: string;
   type: string;
-  label: string;
+  label?: string;
   required?: boolean;
-  conditional?: (values: any) => boolean;
-  options?: Array<{ label: string; value: any }>;
+  conditional?: {
+    field: string;
+    value: string | string[];
+  };
+  options?: string[] | { value: string | boolean | number; label: string }[];
+  colSpan?: number;
+  defaultValue?: any;
+  className?: string;
   [key: string]: any;
 }
 ```
@@ -712,6 +835,21 @@ export interface CRUDOptions<T, U extends StructUser = StructUser> {
 }
 ```
 
+### StructConfig
+
+```typescript
+export type StructConfig = {
+  database?: {
+    startConnection: (dbName?: string) => Promise<any>;
+    closeConnection?: (dbName?: string) => Promise<any>;
+  }
+  auth?: {
+    getSession?: (req?: NextRequest, context?: { params: Promise<any> }) => Promise<any>
+    getUser?: () => Promise<any>
+  }
+}
+```
+
 ---
 
 ## 🎯 Best Practices
@@ -724,6 +862,8 @@ export interface CRUDOptions<T, U extends StructUser = StructUser> {
 6. **Use TypeScript** to get full type inference and autocomplete
 7. **Keep your UI components** in the StructUIProvider for consistency
 8. **Use React Query** for efficient data fetching and caching
+9. **Implement closeConnection** in your database config for proper cleanup
+10. **Use advanced filtering** with comma/pipe syntax and nested fields for complex queries
 
 ---
 
