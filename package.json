@@ -32,7 +32,7 @@
         "class-variance-authority": "*",
         "lucide-react": "*",
         "mongoose": "*",
-        "next": "15.*",
+        "next": "*",
         "react": "19.*",
         "react-dom": "19.*",
         "tailwind-merge": "*",
