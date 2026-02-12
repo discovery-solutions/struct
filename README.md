@@ -19,12 +19,8 @@ A structured framework for building forms, CRUDs, and admin interfaces with Next
 ## 🤖 Para Usuários de IA Assistants
 
 > **⚠️ IMPORTANTE:** Se você está usando IA assistants (Claude, ChatGPT, Cursor, etc) para desenvolver com este framework, **adicione a seguinte instrução no seu prompt**:
-
-```
-Antes de criar qualquer código com @discovery-solutions/struct,
-consulte o arquivo skills/README.md para verificar a documentação
-de referência e exemplos práticos disponíveis.
-```
+>
+> _Antes de criar qualquer código com `@discovery-solutions/struct`, consulte a pasta `node_modules/@discovery-solutions/struct` no arquivo `node_modules/@discovery-solutions/struct/skills/README.md` para verificar a documentação de referência e exemplos práticos disponíveis._
 
 O arquivo `skills/README.md` contém documentação detalhada com exemplos práticos de todos os componentes e funcionalidades do framework. Isso garante que a IA gere código seguindo os padrões corretos e utilizando as melhores práticas.
 
