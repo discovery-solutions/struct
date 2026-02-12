@@ -59,6 +59,7 @@
     "keywords": [],
     "homepage": "https://github.com/discovery-solutions/struct#readme",
     "files": [
+        "skills",
         "dist",
         "src"
     ]
