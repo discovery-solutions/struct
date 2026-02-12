@@ -62,12 +62,13 @@ export const FieldRender = ({
   });
 
   const handleChange = useCallback(
-    (e: any) => {
+    (externalOnChange?: (values: Record<string, any>) => void) => (e: any) => {
       const { name, value, checked, type } = e.target;
       setValues(prev => {
         const newValue = type === "checkbox" ? checked : value;
         const newValues = setNestedValue({ ...prev }, name, newValue);
         onChange?.(newValues);
+        externalOnChange?.(newValues);
         return newValues;
       });
     },
@@ -110,7 +111,7 @@ export const FieldRender = ({
           const commonProps: any = {
             ...field,
             value: typeof getValue(field.name) !== "undefined" ? getValue(field.name) : defaultValue,
-            onChange: handleChange,
+            onChange: handleChange(field.onChange),
             className: cn("w-full", field.className),
             disabled,
           };
