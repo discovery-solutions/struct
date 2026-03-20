@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { FieldInterface } from "../../types";
 import { useStructUI } from "../../provider";
 import { cn } from "../../utils";
@@ -28,6 +28,7 @@ export const FieldRender = ({
   buttonLabel = "Continuar",
 }: FieldRenderProps) => {
   const Struct = useStructUI();
+  const formRef = useRef<HTMLFormElement>(null);
   const initialValues = useMemo(() => {
     if (propsInitialValues) return propsInitialValues;
 
@@ -87,7 +88,16 @@ export const FieldRender = ({
     }
 
     try {
-      onSubmit?.(values);
+      let merged = { ...values };
+      if (formRef.current) {
+        const formData = new FormData(formRef.current);
+        formData.forEach((value, key) => {
+          if (typeof merged[key] === "undefined" || merged[key] === "" || merged[key] === null) {
+            merged = setNestedValue(merged, key, value);
+          }
+        });
+      }
+      onSubmit?.(merged);
     } catch (err) {
       console.error(err);
       Struct.toast.error("Erro ao enviar o formulário");
@@ -100,7 +110,7 @@ export const FieldRender = ({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form ref={formRef} onSubmit={handleSubmit}>
       <div className={`grid ${(COL_GRID as any)[cols]} gap-4 w-full`}>
         {fields.map(({ defaultValue, ...field }) => {
           if (!isConditionalMet(field, values)) return null;
