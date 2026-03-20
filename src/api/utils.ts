@@ -1,7 +1,8 @@
 import { Handler, Params, StructUser } from "./types";
 import { NextRequest } from "next/server";
 import { ZodError } from "zod";
-import { Struct } from "../config";
+
+import { Struct, getLogger } from "../config";
 
 export const parseEntityToObject = (entity: any): any => {
   if (!entity) return entity;
@@ -20,16 +21,17 @@ export const withSession = <U extends StructUser>(
   params: Params = {}
 ) => {
   return async (req: NextRequest, context: { params: Promise<any> }) => {
+    const logger = getLogger();
     try {
       let user = null as U | null;
 
       if (Struct.config?.database?.startConnection) {
-        console.log("[withSession] Starting DB connection...");
+        logger.info("[withSession] Starting DB connection...");
         await Promise.resolve(Struct.config?.database?.startConnection?.(params?.database));
       }
 
       if (Struct.config?.auth?.getSession) {
-        console.log("[withSession] Checking user session...");
+        logger.info("[withSession] Checking user session...");
         const session = await Struct.config?.auth?.getSession?.(req, context);
         user = (session?.user as U) || null;
 
@@ -58,12 +60,12 @@ export const withSession = <U extends StructUser>(
           .map((key) => `[${key}]: ${err.flatten().fieldErrors[key] || "Campo inválido"}`)
         : err.message || "Internal Server Error";
 
-      console.log(error);
+      logger.error("[withSession] Error:", err);
       return Response.json({ error }, { status: 500 });
     } finally {
       // garante que sempre será chamado
       if (Struct.config?.database?.closeConnection) {
-        console.log("[withSession] Closing DB connection...");
+        logger.info("[withSession] Closing DB connection...");
         await Promise.resolve(Struct.config?.database?.closeConnection?.(params?.database));
       }
     }

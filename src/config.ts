@@ -1,5 +1,11 @@
 import { NextRequest } from "next/server"
 
+export type StructLogger = {
+  info?: (...args: any[]) => void;
+  error?: (...args: any[]) => void;
+  warn?: (...args: any[]) => void;
+}
+
 export type StructConfig = {
   database?: {
     startConnection: (dbName?: string) => Promise<any>;
@@ -9,6 +15,7 @@ export type StructConfig = {
     getSession?: (req?: NextRequest, context?: { params: Promise<any> }) => Promise<any>
     getUser?: () => Promise<any>
   }
+  logger?: StructLogger;
 }
 
 let config: StructConfig = {}
@@ -24,3 +31,9 @@ export const Struct = {
     return config
   }
 }
+
+export const getLogger = (): Required<StructLogger> => ({
+  info: config.logger?.info ?? console.log,
+  error: config.logger?.error ?? console.error,
+  warn: config.logger?.warn ?? console.warn,
+})
