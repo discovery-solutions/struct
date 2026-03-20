@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Struct = void 0;
+exports.getLogger = exports.Struct = void 0;
 let config = {};
 exports.Struct = {
     configure: (cfg) => {
@@ -12,3 +12,9 @@ exports.Struct = {
         return config;
     }
 };
+const getLogger = () => ({
+    info: config.logger?.info ?? console.log,
+    error: config.logger?.error ?? console.error,
+    warn: config.logger?.warn ?? console.warn,
+});
+exports.getLogger = getLogger;

@@ -8,6 +8,7 @@ const provider_1 = require("../../provider");
 const utils_1 = require("../../utils");
 const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onChange, onSubmit, initialValues: propsInitialValues, buttonLabel = "Continuar", }) => {
     const Struct = (0, provider_1.useStructUI)();
+    const formRef = (0, react_1.useRef)(null);
     const initialValues = (0, react_1.useMemo)(() => {
         if (propsInitialValues)
             return propsInitialValues;
@@ -37,12 +38,13 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
         const isEmpty = typeof getValue(field.name) === "undefined" || getValue(field.name)?.length === 0;
         return field.required && isEmpty;
     });
-    const handleChange = (0, react_1.useCallback)((e) => {
+    const handleChange = (0, react_1.useCallback)((externalOnChange) => (e) => {
         const { name, value, checked, type } = e.target;
         setValues(prev => {
             const newValue = type === "checkbox" ? checked : value;
             const newValues = setNestedValue({ ...prev }, name, newValue);
             onChange?.(newValues);
+            externalOnChange?.(newValues);
             return newValues;
         });
     }, [onChange]);
@@ -56,7 +58,16 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
             e.preventDefault();
         }
         try {
-            onSubmit?.(values);
+            let merged = { ...values };
+            if (formRef.current) {
+                const formData = new FormData(formRef.current);
+                formData.forEach((value, key) => {
+                    if (typeof merged[key] === "undefined" || merged[key] === "" || merged[key] === null) {
+                        merged = setNestedValue(merged, key, value);
+                    }
+                });
+            }
+            onSubmit?.(merged);
         }
         catch (err) {
             console.error(err);
@@ -67,7 +78,7 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
         const name = Struct.alias[type];
         return Struct[name];
     };
-    return ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, children: [(0, jsx_runtime_1.jsx)("div", { className: `grid ${COL_GRID[cols]} gap-4 w-full`, children: fields.map(({ defaultValue, ...field }) => {
+    return ((0, jsx_runtime_1.jsxs)("form", { ref: formRef, onSubmit: handleSubmit, children: [(0, jsx_runtime_1.jsx)("div", { className: `grid ${COL_GRID[cols]} gap-4 w-full`, children: fields.map(({ defaultValue, ...field }) => {
                     if (!isConditionalMet(field, values))
                         return null;
                     const Component = getComponentByType(field.type);
@@ -77,7 +88,7 @@ const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onCh
                     const commonProps = {
                         ...field,
                         value: typeof getValue(field.name) !== "undefined" ? getValue(field.name) : defaultValue,
-                        onChange: handleChange,
+                        onChange: handleChange(field.onChange),
                         className: (0, utils_1.cn)("w-full", field.className),
                         disabled,
                     };

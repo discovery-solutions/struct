@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetcher = exports.ModelService = exports.CRUDController = exports.Struct = exports.parseEntityToObject = exports.withSession = void 0;
+exports.fetcher = exports.ModelService = exports.CRUDController = exports.getLogger = exports.Struct = exports.parseEntityToObject = exports.withSession = void 0;
 var utils_1 = require("./api/utils");
 Object.defineProperty(exports, "withSession", { enumerable: true, get: function () { return utils_1.withSession; } });
 Object.defineProperty(exports, "parseEntityToObject", { enumerable: true, get: function () { return utils_1.parseEntityToObject; } });
 var config_1 = require("./config");
 Object.defineProperty(exports, "Struct", { enumerable: true, get: function () { return config_1.Struct; } });
+Object.defineProperty(exports, "getLogger", { enumerable: true, get: function () { return config_1.getLogger; } });
 var crud_1 = require("./api/crud");
 Object.defineProperty(exports, "CRUDController", { enumerable: true, get: function () { return crud_1.CRUDController; } });
 var service_1 = require("./api/service");

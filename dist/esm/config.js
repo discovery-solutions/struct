@@ -9,3 +9,8 @@ export const Struct = {
         return config;
     }
 };
+export const getLogger = () => ({
+    info: config.logger?.info ?? console.log,
+    error: config.logger?.error ?? console.error,
+    warn: config.logger?.warn ?? console.warn,
+});

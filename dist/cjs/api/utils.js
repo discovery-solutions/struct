@@ -14,14 +14,15 @@ const parseEntityToObject = (entity) => {
 exports.parseEntityToObject = parseEntityToObject;
 const withSession = (handler, params = {}) => {
     return async (req, context) => {
+        const logger = (0, config_1.getLogger)();
         try {
             let user = null;
             if (config_1.Struct.config?.database?.startConnection) {
-                console.log("[withSession] Starting DB connection...");
+                logger.info("[withSession] Starting DB connection...");
                 await Promise.resolve(config_1.Struct.config?.database?.startConnection?.(params?.database));
             }
             if (config_1.Struct.config?.auth?.getSession) {
-                console.log("[withSession] Checking user session...");
+                logger.info("[withSession] Checking user session...");
                 const session = await config_1.Struct.config?.auth?.getSession?.(req, context);
                 user = session?.user || null;
                 if (!user) {
@@ -45,13 +46,13 @@ const withSession = (handler, params = {}) => {
                     .flat()
                     .map((key) => `[${key}]: ${err.flatten().fieldErrors[key] || "Campo inválido"}`)
                 : err.message || "Internal Server Error";
-            console.log(error);
+            logger.error("[withSession] Error:", err);
             return Response.json({ error }, { status: 500 });
         }
         finally {
             // garante que sempre será chamado
             if (config_1.Struct.config?.database?.closeConnection) {
-                console.log("[withSession] Closing DB connection...");
+                logger.info("[withSession] Closing DB connection...");
                 await Promise.resolve(config_1.Struct.config?.database?.closeConnection?.(params?.database));
             }
         }
