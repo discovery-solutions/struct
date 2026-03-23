@@ -13,10 +13,16 @@ The `Struct.configure()` method accepts a single `StructConfig` object:
 export type StructConfig = {
   database?: {
     startConnection: (...args: any) => Promise<any>
+    closeConnection?: (...args: any) => Promise<any>
   }
   auth?: {
     getSession?: () => Promise<any>
     getUser?: () => Promise<any>
+  }
+  logger?: {
+    info?: (...args: any[]) => void
+    warn?: (...args: any[]) => void
+    error?: (...args: any[]) => void
   }
 }
 ```
@@ -24,8 +30,10 @@ export type StructConfig = {
 ### Available Options
 
 * **`database.startConnection`** → Async function to establish your DB connection (e.g., Mongoose).
+* **`database.closeConnection`** → (Optional) Async function to close the DB connection after each request.
 * **`auth.getSession`** → (Optional) Function to retrieve the current session.
 * **`auth.getUser`** → (Optional) Function to resolve the current user.
+* **`logger`** → (Optional) Custom logger. Each method falls back to the native `console` equivalent if not provided.
 
 ---
 
@@ -49,6 +57,12 @@ Struct.configure({
   // auth: {
   //   getSession: async () => null,
   //   getUser: async () => null,
+  // },
+  // Optional custom logger — falls back to console if omitted
+  // logger: {
+  //   info: (...args) => myLogger.info(...args),
+  //   warn: (...args) => myLogger.warn(...args),
+  //   error: (...args) => myLogger.error(...args),
   // },
 });
 ```
