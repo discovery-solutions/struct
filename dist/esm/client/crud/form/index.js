@@ -1,4 +1,5 @@
 "use client";
+import { createElement as _createElement } from "react";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -7,7 +8,7 @@ import { useStructUI } from "../../provider";
 import { FieldRender } from "./renderer";
 import { fetcher } from "../../../fetcher";
 import { z } from "zod";
-export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, cols, ...props }) {
+export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, formProps, cols, ...props }) {
     const [errors, setErrors] = useState({});
     const { Loader, toast, queryClient } = useStructUI();
     const params = useParams();
@@ -84,5 +85,5 @@ export function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, o
         if (onAfterSubmit)
             onAfterSubmit(res);
     };
-    return isLoadingData ? (_jsx("div", { className: "flex justify-center items-center py-10", children: _jsx(Loader, {}) }, props.key + "-loading")) : (_jsx(FieldRender, { fields: fields, errors: errors, loading: mutation.isPending, initialValues: fetchedData || defaultValues, onSubmit: handleSubmit, onChange: onChange, buttonLabel: buttonLabel, disabled: mutation.isPending, cols: cols }, props.key));
+    return isLoadingData ? (_jsx("div", { className: "flex justify-center items-center py-10", children: _jsx(Loader, {}) }, props.key + "-loading")) : (_createElement(FieldRender, { ...formProps, key: props.key, fields: fields, errors: errors, loading: mutation.isPending, initialValues: fetchedData || defaultValues, onSubmit: handleSubmit, onChange: onChange, buttonLabel: buttonLabel, disabled: mutation.isPending, cols: cols }));
 }

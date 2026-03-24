@@ -26,6 +26,7 @@ export interface ModelFormProps {
   id?: string;
   buttonLabel?: string | boolean;
   redirectAfterRegister?: boolean;
+  formProps?: React.FormHTMLAttributes<HTMLFormElement>;
 }
 
 export function ModelForm({
@@ -42,6 +43,7 @@ export function ModelForm({
   parseFetchedData,
   redirectAfterRegister = true,
   buttonLabel,
+  formProps,
   cols,
   ...props
 }: ModelFormProps) {
@@ -132,6 +134,7 @@ export function ModelForm({
     </div>
   ) : (
     <FieldRender
+      {...formProps}
       key={props.key}
       fields={fields}
       errors={errors}

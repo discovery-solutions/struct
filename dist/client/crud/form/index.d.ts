@@ -17,5 +17,6 @@ export interface ModelFormProps {
     id?: string;
     buttonLabel?: string | boolean;
     redirectAfterRegister?: boolean;
+    formProps?: React.FormHTMLAttributes<HTMLFormElement>;
 }
-export declare function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister, buttonLabel, cols, ...props }: ModelFormProps): import("react/jsx-runtime").JSX.Element;
+export declare function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister, buttonLabel, formProps, cols, ...props }: ModelFormProps): import("react/jsx-runtime").JSX.Element;

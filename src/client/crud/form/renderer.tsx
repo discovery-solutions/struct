@@ -4,7 +4,7 @@ import { FieldInterface } from "../../types";
 import { useStructUI } from "../../provider";
 import { cn } from "../../utils";
 
-export interface FieldRenderProps {
+export interface FieldRenderProps extends React.FormHTMLAttributes<HTMLFormElement> {
   errors?: Record<string, string | undefined>;
   fields: FieldInterface[];
   cols?: number;
@@ -26,6 +26,7 @@ export const FieldRender = ({
   onSubmit,
   initialValues: propsInitialValues,
   buttonLabel = "Continuar",
+  ...props
 }: FieldRenderProps) => {
   const Struct = useStructUI();
   const formRef = useRef<HTMLFormElement>(null);
@@ -58,7 +59,8 @@ export const FieldRender = ({
 
   const hasUnfilledRequiredFields = fields.some(field => {
     if (field.conditional && !isConditionalMet(field, values)) return false;
-    const isEmpty = typeof getValue(field.name) === "undefined" || getValue(field.name)?.length === 0;
+    const value = getValue(field.name);
+    const isEmpty = typeof value === "undefined" || value === null || (typeof value === "string" && value.trim().length === 0) || (Array.isArray(value) && value.length === 0);
     return field.required && isEmpty;
   });
 
@@ -76,23 +78,22 @@ export const FieldRender = ({
     [onChange]
   );
 
-  const onClick = (e: any) => {
-    e.preventDefault();
-    handleSubmit();
-  }
-
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) {
-      e.stopPropagation();
       e.preventDefault();
+      e.stopPropagation();
     }
 
     try {
       let merged = { ...values };
+      // O FormData aqui ajuda a capturar o autocomplete do browser caso o state não tenha atualizado
       if (formRef.current) {
         const formData = new FormData(formRef.current);
         formData.forEach((value, key) => {
-          if (typeof merged[key] === "undefined" || merged[key] === "" || merged[key] === null) {
+          // Se o valor no state for vazio/nulo, mas no formData tiver algo, usamos o do formData
+          const stateValue = getValue(key);
+          const isEmpty = typeof stateValue === "undefined" || stateValue === "" || stateValue === null;
+          if (isEmpty && value !== "") {
             merged = setNestedValue(merged, key, value);
           }
         });
@@ -110,7 +111,7 @@ export const FieldRender = ({
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit}>
+    <form ref={formRef} {...props} onSubmit={handleSubmit}>
       <div className={`grid ${(COL_GRID as any)[cols]} gap-4 w-full`}>
         {fields.map(({ defaultValue, ...field }) => {
           if (!isConditionalMet(field, values)) return null;
@@ -138,7 +139,7 @@ export const FieldRender = ({
         })}
       </div>
       {(onSubmit && buttonLabel) && (
-        <Struct.Button onClick={onClick} type="submit" disabled={hasUnfilledRequiredFields || loading} className="min-w-[12rem] mt-6">
+        <Struct.Button type="submit" disabled={hasUnfilledRequiredFields || loading} className="min-w-[12rem] mt-6">
           {loading ? "Carregando..." : buttonLabel}
         </Struct.Button>
       )}

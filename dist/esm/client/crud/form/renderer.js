@@ -3,7 +3,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useStructUI } from "../../provider";
 import { cn } from "../../utils";
-export const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onChange, onSubmit, initialValues: propsInitialValues, buttonLabel = "Continuar", }) => {
+export const FieldRender = ({ errors, fields, cols = 3, loading = false, disabled, onChange, onSubmit, initialValues: propsInitialValues, buttonLabel = "Continuar", ...props }) => {
     const Struct = useStructUI();
     const formRef = useRef(null);
     const initialValues = useMemo(() => {
@@ -32,7 +32,8 @@ export const FieldRender = ({ errors, fields, cols = 3, loading = false, disable
     const hasUnfilledRequiredFields = fields.some(field => {
         if (field.conditional && !isConditionalMet(field, values))
             return false;
-        const isEmpty = typeof getValue(field.name) === "undefined" || getValue(field.name)?.length === 0;
+        const value = getValue(field.name);
+        const isEmpty = typeof value === "undefined" || value === null || (typeof value === "string" && value.trim().length === 0) || (Array.isArray(value) && value.length === 0);
         return field.required && isEmpty;
     });
     const handleChange = useCallback((externalOnChange) => (e) => {
@@ -45,21 +46,21 @@ export const FieldRender = ({ errors, fields, cols = 3, loading = false, disable
             return newValues;
         });
     }, [onChange]);
-    const onClick = (e) => {
-        e.preventDefault();
-        handleSubmit();
-    };
     const handleSubmit = (e) => {
         if (e) {
-            e.stopPropagation();
             e.preventDefault();
+            e.stopPropagation();
         }
         try {
             let merged = { ...values };
+            // O FormData aqui ajuda a capturar o autocomplete do browser caso o state não tenha atualizado
             if (formRef.current) {
                 const formData = new FormData(formRef.current);
                 formData.forEach((value, key) => {
-                    if (typeof merged[key] === "undefined" || merged[key] === "" || merged[key] === null) {
+                    // Se o valor no state for vazio/nulo, mas no formData tiver algo, usamos o do formData
+                    const stateValue = getValue(key);
+                    const isEmpty = typeof stateValue === "undefined" || stateValue === "" || stateValue === null;
+                    if (isEmpty && value !== "") {
                         merged = setNestedValue(merged, key, value);
                     }
                 });
@@ -75,7 +76,7 @@ export const FieldRender = ({ errors, fields, cols = 3, loading = false, disable
         const name = Struct.alias[type];
         return Struct[name];
     };
-    return (_jsxs("form", { ref: formRef, onSubmit: handleSubmit, children: [_jsx("div", { className: `grid ${COL_GRID[cols]} gap-4 w-full`, children: fields.map(({ defaultValue, ...field }) => {
+    return (_jsxs("form", { ref: formRef, ...props, onSubmit: handleSubmit, children: [_jsx("div", { className: `grid ${COL_GRID[cols]} gap-4 w-full`, children: fields.map(({ defaultValue, ...field }) => {
                     if (!isConditionalMet(field, values))
                         return null;
                     const Component = getComponentByType(field.type);
@@ -90,7 +91,7 @@ export const FieldRender = ({ errors, fields, cols = 3, loading = false, disable
                         disabled,
                     };
                     return (_jsxs("div", { className: cn(COL_SPAN[field.colSpan ?? cols]), children: [field.label && _jsx("label", { htmlFor: field.name, className: "mb-1 block text-sm font-medium", children: field.label }), _jsx(Component, { ...commonProps }), error && (_jsx("span", { className: "text-sm text-red-500", children: error }))] }, field.name));
-                }) }), (onSubmit && buttonLabel) && (_jsx(Struct.Button, { onClick: onClick, type: "submit", disabled: hasUnfilledRequiredFields || loading, className: "min-w-[12rem] mt-6", children: loading ? "Carregando..." : buttonLabel }))] }));
+                }) }), (onSubmit && buttonLabel) && (_jsx(Struct.Button, { type: "submit", disabled: hasUnfilledRequiredFields || loading, className: "min-w-[12rem] mt-6", children: loading ? "Carregando..." : buttonLabel }))] }));
 };
 const COL_SPAN = {
     1: "col-span-1 md:col-span-1",

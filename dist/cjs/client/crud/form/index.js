@@ -2,16 +2,17 @@
 "use client";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelForm = ModelForm;
+const react_1 = require("react");
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_query_1 = require("@tanstack/react-query");
 const navigation_1 = require("next/navigation");
-const react_1 = require("react");
+const react_2 = require("react");
 const provider_1 = require("../../provider");
 const renderer_1 = require("./renderer");
 const fetcher_1 = require("../../../fetcher");
 const zod_1 = require("zod");
-function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, cols, ...props }) {
-    const [errors, setErrors] = (0, react_1.useState)({});
+function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch, schema, fields, defaultValues, mutationParams, mode: defaultMode, parseFetchedData, redirectAfterRegister = true, buttonLabel, formProps, cols, ...props }) {
+    const [errors, setErrors] = (0, react_2.useState)({});
     const { Loader, toast, queryClient } = (0, provider_1.useStructUI)();
     const params = (0, navigation_1.useParams)();
     const router = (0, navigation_1.useRouter)();
@@ -28,11 +29,11 @@ function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch,
             return await Promise.resolve(parseFetchedData(raw));
         }),
     });
-    (0, react_1.useEffect)(() => {
+    (0, react_2.useEffect)(() => {
         if (fetchedData && onFetch)
             onFetch?.(fetchedData);
     }, [fetchedData]);
-    (0, react_1.useEffect)(() => {
+    (0, react_2.useEffect)(() => {
         if (query.error) {
             console.error(query.error);
             toast.error(query.error?.message || "Erro ao carregar dados");
@@ -87,5 +88,5 @@ function ModelForm({ onBeforeSubmit, onAfterSubmit, onChange, onSubmit, onFetch,
         if (onAfterSubmit)
             onAfterSubmit(res);
     };
-    return isLoadingData ? ((0, jsx_runtime_1.jsx)("div", { className: "flex justify-center items-center py-10", children: (0, jsx_runtime_1.jsx)(Loader, {}) }, props.key + "-loading")) : ((0, jsx_runtime_1.jsx)(renderer_1.FieldRender, { fields: fields, errors: errors, loading: mutation.isPending, initialValues: fetchedData || defaultValues, onSubmit: handleSubmit, onChange: onChange, buttonLabel: buttonLabel, disabled: mutation.isPending, cols: cols }, props.key));
+    return isLoadingData ? ((0, jsx_runtime_1.jsx)("div", { className: "flex justify-center items-center py-10", children: (0, jsx_runtime_1.jsx)(Loader, {}) }, props.key + "-loading")) : ((0, react_1.createElement)(renderer_1.FieldRender, { ...formProps, key: props.key, fields: fields, errors: errors, loading: mutation.isPending, initialValues: fetchedData || defaultValues, onSubmit: handleSubmit, onChange: onChange, buttonLabel: buttonLabel, disabled: mutation.isPending, cols: cols }));
 }

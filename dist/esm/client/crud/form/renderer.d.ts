@@ -1,5 +1,5 @@
 import { FieldInterface } from "../../types";
-export interface FieldRenderProps {
+export interface FieldRenderProps extends React.FormHTMLAttributes<HTMLFormElement> {
     errors?: Record<string, string | undefined>;
     fields: FieldInterface[];
     cols?: number;
@@ -10,4 +10,4 @@ export interface FieldRenderProps {
     buttonLabel?: string | null | React.ReactNode;
     disabled?: boolean;
 }
-export declare const FieldRender: ({ errors, fields, cols, loading, disabled, onChange, onSubmit, initialValues: propsInitialValues, buttonLabel, }: FieldRenderProps) => import("react/jsx-runtime").JSX.Element;
+export declare const FieldRender: ({ errors, fields, cols, loading, disabled, onChange, onSubmit, initialValues: propsInitialValues, buttonLabel, ...props }: FieldRenderProps) => import("react/jsx-runtime").JSX.Element;
