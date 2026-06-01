@@ -292,7 +292,7 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       const searchParam = searchOptions.param || "q";
       const searchValue = filters[searchParam];
 
-      if (searchValue && String(searchValue).trim() !== "") {
+      if (searchValue !== undefined && String(searchValue).trim() !== "") {
         const value = decodeURIComponent(String(searchValue).trim());
         
         if (searchOptions.customQuery) {
@@ -316,10 +316,10 @@ export class CRUDController<T, U extends StructUser = StructUser> {
             parsedFilters.$or = or;
           }
         }
-
-        // Remove search param from final filters so it doesn't try to match a field named 'q'
-        delete parsedFilters[searchParam];
       }
+
+      // Always remove search param from final filters so it doesn't try to match a field named 'q'
+      delete parsedFilters[searchParam];
     }
 
     // 5. Soft delete
