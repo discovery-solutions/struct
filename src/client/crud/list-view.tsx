@@ -61,7 +61,7 @@ export function ListView<T>({
     isLoading,
     error,
     refetch,
-  } = useQuery<T[] | PaginatedResponse<T>>({
+  } = useQuery<any | T[] | PaginatedResponse<T>>({
     enabled: !!endpoint,
     queryKey: [endpoint, "list", currentPage, pageSize, Object.values(queryParams || {})],
     queryFn: () => fetcher(`/api/${endpoint}`, {
@@ -90,7 +90,7 @@ export function ListView<T>({
         rawData = queryData.data;
         pagination = queryData;
       } else {
-        rawData = queryData as T[];
+        rawData = queryData.data as T[];
       }
     }
 

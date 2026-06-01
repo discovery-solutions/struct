@@ -52,7 +52,7 @@ export function TableView({
   const Struct = useStructUI();
   const router = useRouter();
 
-  const { data: queryData, isLoading } = useQuery<any[] | PaginatedResponse<any>>({
+  const { data: queryData, isLoading } = useQuery<any | PaginatedResponse<any>>({
     queryKey: [endpoint, "list", currentPage, pageSize, search],
     queryFn: () => fetcher(`/api/${endpoint}`, {
       params: {
@@ -78,7 +78,7 @@ export function TableView({
         rawData = queryData.data;
         pagination = queryData;
       } else {
-        rawData = queryData as any[];
+        rawData = queryData.data as any[];
       }
     }
 

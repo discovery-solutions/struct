@@ -40,7 +40,7 @@ export function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit
                 pagination = queryData;
             }
             else {
-                rawData = queryData;
+                rawData = queryData.data;
             }
         }
         return {

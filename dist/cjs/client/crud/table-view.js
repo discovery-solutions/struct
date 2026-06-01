@@ -46,7 +46,7 @@ function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit = fals
                 pagination = queryData;
             }
             else {
-                rawData = queryData;
+                rawData = queryData.data;
             }
         }
         return {
