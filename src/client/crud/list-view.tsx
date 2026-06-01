@@ -90,7 +90,7 @@ export function ListView<T>({
         rawData = queryData.data;
         pagination = queryData;
       } else {
-        rawData = queryData.data as T[];
+        rawData = (queryData?.data || queryData) as any[];
       }
     }
 

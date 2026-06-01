@@ -78,7 +78,7 @@ export function TableView({
         rawData = queryData.data;
         pagination = queryData;
       } else {
-        rawData = queryData.data as any[];
+        rawData = (queryData?.data || queryData) as any[];
       }
     }
 

@@ -41,7 +41,7 @@ function ListView({ data, endpoint, filters, queryParams, asChild, className, co
                 pagination = queryData;
             }
             else {
-                rawData = queryData.data;
+                rawData = (queryData?.data || queryData);
             }
         }
         return {
