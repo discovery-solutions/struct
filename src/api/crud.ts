@@ -292,8 +292,8 @@ export class CRUDController<T, U extends StructUser = StructUser> {
       const searchParam = searchOptions.param || "q";
       const searchValue = filters[searchParam];
 
-      if (searchValue) {
-        const value = decodeURIComponent(String(searchValue));
+      if (searchValue && String(searchValue).trim() !== "") {
+        const value = decodeURIComponent(String(searchValue).trim());
         
         if (searchOptions.customQuery) {
           const custom = searchOptions.customQuery(value);
