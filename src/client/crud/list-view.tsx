@@ -1,18 +1,11 @@
 "use client";
 import { Fragment, ReactNode, useMemo, useState } from "react";
+import { PaginatedResponse } from "../types";
 import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../../fetcher";
 import { cn } from "../utils";
-
-export interface PaginatedResponse<T> {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  data: T[];
-}
 
 export interface ListViewProps<T> {
   renderItem: (item: T, index: number) => ReactNode
@@ -74,6 +67,7 @@ export function ListView<T>({
     queryFn: () => fetcher(`/api/${endpoint}`, {
       params: {
         ...queryParams,
+        ...(search ? { search } : {}),
         ...(enablePagination ? { page: currentPage, limit: pageSize } : {})
       }
     }) as any,

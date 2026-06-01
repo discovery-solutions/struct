@@ -1,8 +1,9 @@
 "use client";
 import { ConfirmDialog, useConfirmDialog } from "../confirm-dialog";
+import { useState, ReactNode, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, ReactNode } from "react";
+import { PaginatedResponse } from "../types";
 import { useModalForm } from "./form/modal";
 import { MoreVertical } from "lucide-react";
 import { SearchHeader } from "./search-header";
@@ -25,6 +26,8 @@ export type TableViewProps = {
   ListHeaderComponent?: ReactNode;
   ListEmptyComponent?: ReactNode;
   ListFooterComponent?: ReactNode;
+  enablePagination?: boolean;
+  pageSize?: number;
 };
 
 export function TableView({
@@ -41,17 +44,49 @@ export function TableView({
   ListEmptyComponent,
   ListFooterComponent,
   ListHeaderComponent,
+  enablePagination = false,
+  pageSize = 10,
 }: TableViewProps) {
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const Struct = useStructUI();
   const router = useRouter();
 
-  const { data = [], isLoading } = useQuery({
-    queryKey: [endpoint, "list"],
-    queryFn: () => fetcher(`/api/${endpoint}`, { params: queryParams }) as any,
+  const { data: queryData, isLoading } = useQuery<any[] | PaginatedResponse<any>>({
+    queryKey: [endpoint, "list", currentPage, pageSize, search],
+    queryFn: () => fetcher(`/api/${endpoint}`, {
+      params: {
+        ...queryParams,
+        ...(search ? { search } : {}),
+        ...(enablePagination ? { page: currentPage, limit: pageSize } : {})
+      }
+    }) as any,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  const isPaginatedResponse = (data: any): data is PaginatedResponse<any> => {
+    return data && typeof data === 'object' && 'data' in data && 'page' in data && 'totalPages' in data;
+  };
+
+  const { items, paginationInfo } = useMemo(() => {
+    let rawData: any[] = [];
+    let pagination: PaginatedResponse<any> | null = null;
+
+    if (queryData) {
+      if (isPaginatedResponse(queryData)) {
+        rawData = queryData.data;
+        pagination = queryData;
+      } else {
+        rawData = queryData as any[];
+      }
+    }
+
+    return {
+      items: rawData,
+      paginationInfo: pagination
+    };
+  }, [queryData]);
 
   const enhancedColumns = [
     ...(columns || []),
@@ -73,11 +108,69 @@ export function TableView({
     }]),
   ];
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const renderPagination = () => {
+    if (!enablePagination || !paginationInfo) return null;
+
+    const { page, totalPages, total } = paginationInfo;
+
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex items-center justify-between gap-4 pt-4">
+        <div className="text-sm text-muted-foreground">
+          Página {page} de {totalPages} ({total} {total === 1 ? 'item' : 'itens'})
+        </div>
+        <div className="flex gap-2">
+          <Struct.Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page <= 1}
+          >
+            Anterior
+          </Struct.Button>
+
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            let pageNum: number;
+            if (totalPages <= 5) pageNum = i + 1;
+            else if (page <= 3) pageNum = i + 1;
+            else if (page >= totalPages - 2) pageNum = totalPages - 4 + i;
+            else pageNum = page - 2 + i;
+
+            return (
+              <Struct.Button
+                key={pageNum}
+                variant={page === pageNum ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePageChange(pageNum)}
+              >
+                {pageNum}
+              </Struct.Button>
+            );
+          })}
+
+          <Struct.Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= totalPages}
+          >
+            Próxima
+          </Struct.Button>
+        </div>
+      </div>
+    );
+  };
+
   const filteredData = search
-    ? (data as any[]).filter((item) =>
+    ? (items as any[]).filter((item) =>
       JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
     )
-    : data;
+    : items;
 
   return (
     <div className="flex flex-1 flex-col p-4 gap-4">
@@ -90,7 +183,7 @@ export function TableView({
           onChange={({ target }) => setSearch(target.value)}
           LeftItems={
             typeof LeftItems === "function"
-              ? LeftItems?.(filteredData) || LeftItems
+              ? LeftItems?.(items) || LeftItems
               : LeftItems
           }
         />
@@ -100,14 +193,17 @@ export function TableView({
         <div className="flex items-center justify-center h-full">
           <Struct.Loader />
         </div>
-      ) : filteredData.length === 0 ? (
+      ) : items.length === 0 ? (
         ListEmptyComponent ?? (
           <p className="text-center text-muted-foreground mt-10">
             Nenhum item encontrado.
           </p>
         )
       ) : (
-        <DataTable data={filteredData as any} columns={enhancedColumns} />
+        <>
+          <DataTable data={filteredData as any} columns={enhancedColumns} />
+          {renderPagination()}
+        </>
       )}
 
       {ListFooterComponent}

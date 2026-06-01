@@ -13,5 +13,7 @@ export type TableViewProps = {
     ListHeaderComponent?: ReactNode;
     ListEmptyComponent?: ReactNode;
     ListFooterComponent?: ReactNode;
+    enablePagination?: boolean;
+    pageSize?: number;
 };
-export declare function TableView({ columns, asChild, modalId, hideAdd, hideEdit, hideDuplicate, hideOptions, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, }: TableViewProps): import("react/jsx-runtime").JSX.Element;
+export declare function TableView({ columns, asChild, modalId, hideAdd, hideEdit, hideDuplicate, hideOptions, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, enablePagination, pageSize, }: TableViewProps): import("react/jsx-runtime").JSX.Element;

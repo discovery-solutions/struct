@@ -1,11 +1,4 @@
 import { ReactNode } from "react";
-export interface PaginatedResponse<T> {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    data: T[];
-}
 export interface ListViewProps<T> {
     renderItem: (item: T, index: number) => ReactNode;
     keyExtractor?: (item: T, index: number) => string | number;

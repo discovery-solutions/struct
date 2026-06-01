@@ -130,16 +130,31 @@ updateSchema: z.object({
 
 ---
 
-## 🔍 Filtering & Pagination
+## 🔍 Filtering, Search & Pagination
 
-`GET /api/users?page=2&limit=10&name=Lucas`
+`GET /api/users?page=2&limit=10&name=Lucas&q=dev`
 
 * `page` → defaults to `1`
 * `limit` → defaults to `0` (no pagination)
-* Any query param is treated as a filter.
-* Nested filters with dot notation supported: `address.city=NY`
-* ObjectId fields (`id`, `_id`) are automatically converted.
-* With `softDelete: true`, automatically excludes deleted docs.
+* `sort` → e.g. `sort=name` or `sort=-createdAt`
+* Any query param is treated as a filter (exact match).
+* `q` (or custom) → Global search across configured fields (see below).
+
+### Search Configuration
+
+You can enable global search by providing the `search` option:
+
+```ts
+export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
+  search: {
+    param: "q", // default is "q"
+    fields: ["name", "email", "role"],
+    // Optional: customQuery: (value) => ({ $or: [...] })
+  }
+});
+```
+
+When the search parameter is present in the URL, the controller will perform a case-insensitive regex search across all specified fields.
 
 Response format (when paginated):
 

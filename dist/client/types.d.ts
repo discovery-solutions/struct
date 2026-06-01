@@ -78,4 +78,11 @@ export interface FieldInterface {
     };
     [key: string]: any;
 }
+export interface PaginatedResponse<T> {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    data: T[];
+}
 export {};

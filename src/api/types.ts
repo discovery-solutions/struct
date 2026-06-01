@@ -29,6 +29,12 @@ export interface Hooks<T, U extends StructUser = StructUser> {
   ) => Promise<any>;
 };
 
+export interface SearchOptions<T> {
+  param?: string;
+  fields: (keyof T | string)[];
+  customQuery?: (value: string) => any;
+}
+
 export interface CRUDOptions<T, U extends StructUser = StructUser> {
   populate?: (keyof T)[] | any;
   createSchema?: z.infer<any>;
@@ -38,6 +44,7 @@ export interface CRUDOptions<T, U extends StructUser = StructUser> {
   customParser?: (req: NextRequest) => Promise<Partial<T>>;
   roles?: Partial<Record<"GET" | "POST" | "PATCH" | "DELETE", string | string[]>>;
   sort?: Record<string, 1 | -1> | string[];
+  search?: SearchOptions<T>;
 }
 
 

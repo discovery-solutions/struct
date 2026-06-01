@@ -264,12 +264,57 @@ class CRUDController {
                 }
             };
             convertObjectIds(parsedFilters);
-            // 4. Soft delete
+            // 4. Search support
+            const searchOptions = this.options.search;
+            if (searchOptions && searchOptions.fields?.length) {
+                const searchParam = searchOptions.param || "q";
+                const searchValue = filters[searchParam];
+                if (searchValue) {
+                    const value = decodeURIComponent(String(searchValue));
+                    if (searchOptions.customQuery) {
+                        const custom = searchOptions.customQuery(value);
+                        if (custom) {
+                            parsedFilters.$and = parsedFilters.$and || [];
+                            parsedFilters.$and.push(custom);
+                        }
+                    }
+                    else {
+                        const or = searchOptions.fields.map((field) => ({
+                            [field]: { $regex: value, $options: "i" },
+                        }));
+                        if (parsedFilters.$or) {
+                            // If already has $or (e.g. from soft delete), wrap both in $and
+                            const existingOr = parsedFilters.$or;
+                            delete parsedFilters.$or;
+                            parsedFilters.$and = parsedFilters.$and || [];
+                            parsedFilters.$and.push({ $or: existingOr }, { $or: or });
+                        }
+                        else {
+                            parsedFilters.$or = or;
+                        }
+                    }
+                    // Remove search param from final filters so it doesn't try to match a field named 'q'
+                    delete parsedFilters[searchParam];
+                }
+            }
+            // 5. Soft delete
             if (this.options?.softDelete) {
-                parsedFilters.$or = [
-                    { deletedAt: { $exists: false } },
-                    { deletedAt: null },
-                ];
+                const softDeleteQuery = {
+                    $or: [
+                        { deletedAt: { $exists: false } },
+                        { deletedAt: null },
+                    ],
+                };
+                if (parsedFilters.$or) {
+                    // If we already have an $or (possibly from search), we must combine them with $and
+                    const searchOr = parsedFilters.$or;
+                    delete parsedFilters.$or;
+                    parsedFilters.$and = parsedFilters.$and || [];
+                    parsedFilters.$and.push({ $or: searchOr }, softDeleteQuery);
+                }
+                else {
+                    parsedFilters.$or = softDeleteQuery.$or;
+                }
             }
             return parsedFilters;
         };

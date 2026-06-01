@@ -19,6 +19,7 @@ function ListView({ data, endpoint, filters, queryParams, asChild, className, co
         queryFn: () => (0, fetcher_1.fetcher)(`/api/${endpoint}`, {
             params: {
                 ...queryParams,
+                ...(search ? { search } : {}),
                 ...(enablePagination ? { page: currentPage, limit: pageSize } : {})
             }
         }),

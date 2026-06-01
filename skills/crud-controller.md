@@ -45,6 +45,12 @@ Isso cria automaticamente:
 ## Opções disponíveis
 
 ```typescript
+interface SearchOptions<T> {
+  param?: string;
+  fields: (keyof T | string)[];
+  customQuery?: (value: string) => any;
+}
+
 interface CRUDOptions<T> {
   populate?: string[];
   createSchema?: ZodSchema;
@@ -59,12 +65,25 @@ interface CRUDOptions<T> {
     DELETE?: string | string[];
   };
   sort?: Record<string, 1 | -1>;
+  search?: SearchOptions<T>;
 }
 ```
 
 ## Exemplos de uso
 
-### Com validação Zod
+### Com Pesquisa Global
+
+```typescript
+export const { GET, POST, PATCH, DELETE } = new CRUDController<UserInterface>(User, {
+  search: {
+    fields: ["name", "email", "role"]
+  }
+});
+```
+
+Isso habilita a busca via query param `?q=...` que busca em qualquer um dos campos listados usando regex case-insensitive.
+
+### Com Soft Delete
 
 ```typescript
 import { User, UserInterface, userCreateSchema, userUpdateSchema } from "@/models/identity/user/model";
