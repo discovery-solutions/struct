@@ -25,6 +25,7 @@ interface ListViewProps<T> {
   keyExtractor: (item: T) => string;
   enablePagination?: boolean;
   pageSize?: number;
+  hideAdd?: boolean;
   LoadingComponent?: React.ComponentType;
   EmptyComponent?: React.ComponentType;
   ErrorComponent?: React.ComponentType<{ error: Error }>;
@@ -187,6 +188,17 @@ export default function ProductGallery() {
 />
 ```
 
+### Escondendo botão adicionar
+
+```typescript
+<ListView<Product>
+  endpoint="products"
+  hideAdd={true}
+  renderItem={(product) => <ProductCard product={product} />}
+  keyExtractor={(product) => product._id}
+/>
+```
+
 ### Com componente customizado de loading
 
 ```typescript
@@ -333,3 +345,4 @@ function UsersList() {
 - Combine com ModalForm para edição inline
 - Use grid CSS para layouts responsivos
 - Ideal para mobile e designs criativos
+- Use `hideAdd={true}` para páginas apenas de listagem (ex.: dashboards, relatórios)

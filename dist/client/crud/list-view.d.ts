@@ -15,7 +15,6 @@ export interface ListViewProps<T> {
     className?: string;
     containerClassName?: string;
     title?: string;
-    showNewButton?: boolean;
     data?: T[];
     queryParams?: any;
     asChild?: boolean;
@@ -27,4 +26,4 @@ export interface ListViewProps<T> {
     pageSize?: number;
     hideAdd?: boolean;
 }
-export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListItemWrapper, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, showNewButton, enablePagination, pageSize, hideAdd, }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;
+export declare function ListView<T>({ data, endpoint, filters, queryParams, asChild, className, containerClassName, renderItem, keyExtractor, ListItemWrapper, ListEmptyComponent, ListHeaderComponent, ListFooterComponent, ItemSeparatorComponent, refetchOnMount, enablePagination, pageSize, hideAdd, }: ListViewProps<T>): import("react/jsx-runtime").JSX.Element;

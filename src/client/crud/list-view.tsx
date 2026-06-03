@@ -20,7 +20,6 @@ export interface ListViewProps<T> {
   className?: string;
   containerClassName?: string;
   title?: string;
-  showNewButton?: boolean;
   data?: T[];
   queryParams?: any;
   asChild?: boolean;
@@ -47,7 +46,6 @@ export function ListView<T>({
   ListFooterComponent,
   ItemSeparatorComponent,
   refetchOnMount = true,
-  showNewButton = true,
   enablePagination = false,
   pageSize = 10,
   hideAdd = false,
@@ -183,7 +181,7 @@ export function ListView<T>({
           asChild={asChild}
           search={search}
           onChange={({ target }) => setSearch(target.value)}
-          hideAdd={hideAdd === false ? false : !showNewButton}
+          hideAdd={hideAdd}
         />
       )}
 

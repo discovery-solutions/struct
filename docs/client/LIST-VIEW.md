@@ -50,6 +50,7 @@ It is ideal for:
 | `ItemSeparatorComponent`   | `ReactNode`                             | Rendered between items.                                      |                                            |
 | `refetchOnMount`           | `boolean`                               | Whether to refetch data on mount. Defaults to `true`.        |                                            |
 | `hideContent`              | `boolean`                               | Optionally hide content while still rendering header/footer. |                                            |
+| `hideAdd`                  | `boolean`                               | If `true`, hides the "Add new" button in the `SearchHeader`. Defaults to `false`. |                                            |
 
 ---
 
