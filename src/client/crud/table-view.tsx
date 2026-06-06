@@ -10,6 +10,7 @@ import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
 import { DataTable } from "./data-table";
 import { fetcher } from "../../fetcher";
+import { cn } from "../utils";
 import Link from "next/link";
 
 export type TableViewProps = {
@@ -28,6 +29,8 @@ export type TableViewProps = {
   ListFooterComponent?: ReactNode;
   enablePagination?: boolean;
   pageSize?: number;
+  className?: string;
+  containerClassName?: string;
 };
 
 export function TableView({
@@ -46,6 +49,8 @@ export function TableView({
   ListHeaderComponent,
   enablePagination = false,
   pageSize = 10,
+  className,
+  containerClassName,
 }: TableViewProps) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,7 +178,7 @@ export function TableView({
     : items;
 
   return (
-    <div className="flex flex-1 flex-col p-4 gap-4">
+    <div className={cn("flex flex-1 flex-col p-4 gap-4", className)}>
       {ListHeaderComponent ?? (
         <SearchHeader
           modalId={modalId}
@@ -200,10 +205,10 @@ export function TableView({
           </p>
         )
       ) : (
-        <>
+        <div className={cn("flex flex-col gap-4", containerClassName)}>
           <DataTable data={filteredData as any} columns={enhancedColumns} />
           {renderPagination()}
-        </>
+        </div>
       )}
 
       {ListFooterComponent}

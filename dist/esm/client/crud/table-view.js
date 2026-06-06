@@ -10,8 +10,9 @@ import { SearchHeader } from "./search-header";
 import { useStructUI } from "../provider";
 import { DataTable } from "./data-table";
 import { fetcher } from "../../fetcher";
+import { cn } from "../utils";
 import Link from "next/link";
-export function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit = false, hideDuplicate = false, hideOptions = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, enablePagination = false, pageSize = 10, }) {
+export function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit = false, hideDuplicate = false, hideOptions = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, enablePagination = false, pageSize = 10, className, containerClassName, }) {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const Struct = useStructUI();
@@ -81,9 +82,9 @@ export function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit
     const filteredData = search
         ? items.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
         : items;
-    return (_jsxs("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? (_jsx(SearchHeader, { modalId: modalId, hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: typeof LeftItems === "function"
+    return (_jsxs("div", { className: cn("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ?? (_jsx(SearchHeader, { modalId: modalId, hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: typeof LeftItems === "function"
                     ? LeftItems?.(items) || LeftItems
-                    : LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : items.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsxs(_Fragment, { children: [_jsx(DataTable, { data: filteredData, columns: enhancedColumns }), renderPagination()] })), ListFooterComponent] }));
+                    : LeftItems })), isLoading ? (_jsx("div", { className: "flex items-center justify-center h-full", children: _jsx(Struct.Loader, {}) })) : items.length === 0 ? (ListEmptyComponent ?? (_jsx("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : (_jsxs("div", { className: cn("flex flex-col gap-4", containerClassName), children: [_jsx(DataTable, { data: filteredData, columns: enhancedColumns }), renderPagination()] })), ListFooterComponent] }));
 }
 const Cell = ({ row, endpoint, parentAsChild, modalId, hideDuplicate, hideEdit, }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

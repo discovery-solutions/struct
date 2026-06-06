@@ -16,8 +16,9 @@ const search_header_1 = require("./search-header");
 const provider_1 = require("../provider");
 const data_table_1 = require("./data-table");
 const fetcher_1 = require("../../fetcher");
+const utils_1 = require("../utils");
 const link_1 = __importDefault(require("next/link"));
-function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit = false, hideDuplicate = false, hideOptions = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, enablePagination = false, pageSize = 10, }) {
+function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit = false, hideDuplicate = false, hideOptions = false, endpoint, queryParams, LeftItems, ListEmptyComponent, ListFooterComponent, ListHeaderComponent, enablePagination = false, pageSize = 10, className, containerClassName, }) {
     const [search, setSearch] = (0, react_1.useState)("");
     const [currentPage, setCurrentPage] = (0, react_1.useState)(1);
     const Struct = (0, provider_1.useStructUI)();
@@ -87,9 +88,9 @@ function TableView({ columns, asChild, modalId, hideAdd = false, hideEdit = fals
     const filteredData = search
         ? items.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()))
         : items;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "flex flex-1 flex-col p-4 gap-4", children: [ListHeaderComponent ?? ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { modalId: modalId, hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: typeof LeftItems === "function"
+    return ((0, jsx_runtime_1.jsxs)("div", { className: (0, utils_1.cn)("flex flex-1 flex-col p-4 gap-4", className), children: [ListHeaderComponent ?? ((0, jsx_runtime_1.jsx)(search_header_1.SearchHeader, { modalId: modalId, hideAdd: hideAdd, asChild: asChild, search: search, onChange: ({ target }) => setSearch(target.value), LeftItems: typeof LeftItems === "function"
                     ? LeftItems?.(items) || LeftItems
-                    : LeftItems })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center h-full", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : items.length === 0 ? (ListEmptyComponent ?? ((0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(data_table_1.DataTable, { data: filteredData, columns: enhancedColumns }), renderPagination()] })), ListFooterComponent] }));
+                    : LeftItems })), isLoading ? ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center h-full", children: (0, jsx_runtime_1.jsx)(Struct.Loader, {}) })) : items.length === 0 ? (ListEmptyComponent ?? ((0, jsx_runtime_1.jsx)("p", { className: "text-center text-muted-foreground mt-10", children: "Nenhum item encontrado." }))) : ((0, jsx_runtime_1.jsxs)("div", { className: (0, utils_1.cn)("flex flex-col gap-4", containerClassName), children: [(0, jsx_runtime_1.jsx)(data_table_1.DataTable, { data: filteredData, columns: enhancedColumns }), renderPagination()] })), ListFooterComponent] }));
 }
 const Cell = ({ row, endpoint, parentAsChild, modalId, hideDuplicate, hideEdit, }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = (0, react_1.useState)(false);
