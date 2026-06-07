@@ -78,6 +78,39 @@ export const FieldRender = ({
     [onChange]
   );
 
+  const getLatestFormData = (): Record<string, any> => {
+    const data = { ...values };
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      formData.forEach((value, key) => {
+        if (key.includes(".")) {
+          const [parent, child] = key.split(".");
+          data[parent] = { ...(data[parent] || {}), [child]: value };
+        } else {
+          data[key] = value;
+        }
+      });
+    }
+    return data;
+  };
+
+  const handleFormBlur = () => {
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    setValues(prev => {
+      const merged = { ...prev };
+      formData.forEach((value, key) => {
+        if (key.includes(".")) {
+          const [parent, child] = key.split(".");
+          merged[parent] = { ...(merged[parent] || {}), [child]: value };
+        } else {
+          merged[key] = value;
+        }
+      });
+      return merged;
+    });
+  };
+
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) {
       e.preventDefault();
@@ -85,19 +118,7 @@ export const FieldRender = ({
     }
 
     try {
-      let merged = { ...values };
-      // O FormData aqui ajuda a capturar o autocomplete do browser caso o state não tenha atualizado
-      if (formRef.current) {
-        const formData = new FormData(formRef.current);
-        formData.forEach((value, key) => {
-          // Se o valor no state for vazio/nulo, mas no formData tiver algo, usamos o do formData
-          const stateValue = getValue(key);
-          const isEmpty = typeof stateValue === "undefined" || stateValue === "" || stateValue === null;
-          if (isEmpty && value !== "") {
-            merged = setNestedValue(merged, key, value);
-          }
-        });
-      }
+      const merged = getLatestFormData();
       onSubmit?.(merged);
     } catch (err) {
       console.error(err);
@@ -111,7 +132,7 @@ export const FieldRender = ({
   }
 
   return (
-    <form ref={formRef} {...props} onSubmit={handleSubmit}>
+    <form ref={formRef} {...props} onSubmit={handleSubmit} onBlur={handleFormBlur}>
       <div className={`grid ${(COL_GRID as any)[cols]} gap-4 w-full`}>
         {fields.map(({ defaultValue, ...field }) => {
           if (!isConditionalMet(field, values)) return null;
